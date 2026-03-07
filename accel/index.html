@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Accel • Live Motion Cloud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Accel • Live Motion</h1>
+      <p class="subtitle">Kirim gerakan HP ke cloud secara real-time</p>
+    </header>
+
+    <div class="glass-card control-section">
+      <div class="control-bar">
+        <button id="btnStart" class="btn primary">START</button>
+        <button id="btnStop" class="btn danger" disabled>STOP</button>
+      </div>
+
+      <div id="status" class="status offline">Siap dimulai</div>
+
+      <div class="readout">
+        <div class="axis-card">
+          <div class="axis-label">X Axis</div>
+          <div class="axis-value" id="xVal">—</div>
+        </div>
+        <div class="axis-card">
+          <div class="axis-label">Y Axis</div>
+          <div class="axis-value" id="yVal">—</div>
+        </div>
+        <div class="axis-card">
+          <div class="axis-label">Z Axis</div>
+          <div class="axis-value" id="zVal">—</div>
+        </div>
+      </div>
+
+      <div class="magnitude" id="mag">Magnitude: — g</div>
+    </div>
+
+    <div class="glass-card chart-section">
+      <h3>Waveform Gerakan</h3>
+      <canvas id="chart"></canvas>
+      <div class="info">60 titik terakhir • kirim ke cloud ~setiap 1.5 detik</div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

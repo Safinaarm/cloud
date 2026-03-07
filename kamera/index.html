@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Absensi Digital</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- ZXing library - versi stabil -->
+  <script src="https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js"></script>
+  <script src="https://unpkg.com/@zxing/browser@0.1.5/umd/index.min.js"></script>
+</head>
+<body>
+
+  <div class="page-container">
+
+    <!-- Halaman 1 -->
+    <div id="page1" class="page active">
+      <div class="app-badge">
+        <div class="app-icon"><i class="fas fa-qrcode"></i></div>
+        <div class="app-name">QR<span>Absen</span></div>
+      </div>
+
+      <div class="card">
+        <div class="step-indicator">
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+        </div>
+
+        <h2 class="page-title">Halo! 👋</h2>
+        <p class="page-subtitle">Masukkan nama atau NIM Anda untuk memulai absensi hari ini.</p>
+
+        <div class="field">
+          <label><i class="fas fa-user"></i> Nama / NIM</label>
+          <input type="text" id="user_id" placeholder="Ketik nama lengkap atau NIM..." autocomplete="off" required>
+        </div>
+
+        <button id="submitNameBtn" class="btn btn-primary">
+          <i class="fas fa-arrow-right"></i> Lanjut ke Scan QR
+        </button>
+
+        <div id="status" class="status-msg"></div>
+      </div>
+    </div>
+
+    <!-- Halaman 2 -->
+    <div id="page2" class="page">
+      <div class="app-badge">
+        <div class="app-icon"><i class="fas fa-camera"></i></div>
+        <div class="app-name">QR<span>Absen</span></div>
+      </div>
+
+      <div class="card">
+        <div class="step-indicator">
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+        </div>
+
+        <h2 class="page-title">Scan QR Code</h2>
+        <p class="page-subtitle">Arahkan kamera ke QR Code yang ditampilkan oleh dosen.</p>
+
+        <div class="camera-frame">
+          <video id="video" playsinline autoplay muted></video>
+          <div class="scan-overlay">
+            <div class="scan-box">
+              <div class="scan-line"></div>
+              <div class="corner-mark tl"></div>
+              <div class="corner-mark tr"></div>
+              <div class="corner-mark bl"></div>
+              <div class="corner-mark br"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="scanStatus" class="status-msg info show">
+          <i class="fas fa-circle-notch fa-spin"></i> Menginisialisasi kamera...
+        </div>
+
+        <button id="backBtn" class="btn btn-ghost">
+          <i class="fas fa-arrow-left"></i> Kembali
+        </button>
+      </div>
+    </div>
+
+    <!-- Halaman 3 -->
+    <div id="page3" class="page">
+      <div class="app-badge">
+        <div class="app-icon app-icon-success"><i class="fas fa-check"></i></div>
+        <div class="app-name">QR<span>Absen</span></div>
+      </div>
+
+      <div class="card">
+        <div class="step-indicator">
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+        </div>
+
+        <div class="success-header">
+          <div class="success-ring">✓</div>
+          <h2>Absensi Tercatat!</h2>
+          <p>Kehadiran Anda telah berhasil disimpan</p>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-row">
+            <span class="label">Nama / NIM</span>
+            <span class="value" id="resultName">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Mata Kuliah</span>
+            <span class="value" id="resultCourse">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Sesi</span>
+            <span class="value" id="resultSession">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">ID Absen</span>
+            <span class="value" id="resultPresenceId">—</span>
+          </div>
+        </div>
+
+        <button id="backToHomeBtn" class="btn btn-primary">
+          <i class="fas fa-home"></i> Kembali ke Awal
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

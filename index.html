@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CloudProyek - Control Center</title>
+  
+  <!-- Google Fonts: Inter (modern, clean untuk dashboard) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            primary: '#4f46e5',     // Indigo
+            accent: '#0ea5e9',      // Sky blue untuk accent lebih soft
+            neutral: '#0f172a',
+            glass: 'rgba(255, 255, 255, 0.72)',
+            'glass-dark': 'rgba(30, 41, 59, 0.68)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { 
+      font-feature-settings: 'liga' 1, 'calt' 1; /* better font rendering */
+      background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+    }
+    .dark body { 
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+    .glass {
+      background: var(--tw-bg-opacity, 1) var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    }
+    .dark .glass {
+      background: var(--tw-bg-opacity, 1) var(--glass-dark);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    }
+    .card-link {
+      display: block;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+      border-radius: 1.25rem;
+      transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .card-link:hover {
+      transform: translateY(-10px) scale(1.035);
+      box-shadow: 0 25px 50px -12px rgba(79, 70, 229, 0.25);
+      border-color: rgba(79, 70, 229, 0.3);
+    }
+    .dark .card-link:hover {
+      box-shadow: 0 25px 50px -12px rgba(14, 165, 233, 0.3);
+    }
+    .card-link .icon i {
+      transition: all 0.4s ease;
+    }
+    .card-link:hover .icon i {
+      transform: scale(1.18) rotate(8deg);
+    }
+    .card-link h3 {
+      transition: color 0.3s ease;
+    }
+    .card-link:hover h3 {
+      color: #4f46e5;
+    }
+    .dark .card-link:hover h3 {
+      color: #0ea5e9;
+    }
+    /* Improved Ripple */
+    .ripple {
+      position: absolute;
+      background: radial-gradient(circle, rgba(79,70,229,0.35) 10%, transparent 70%);
+      border-radius: 50%;
+      transform: scale(0);
+      opacity: 0.9;
+      pointer-events: none;
+      animation: ripple 0.8s ease-out;
+    }
+    @keyframes ripple {
+      to {
+        transform: scale(5);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen text-gray-900 dark:text-gray-100 transition-colors duration-300 antialiased">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 glass border-b border-gray-200/40 dark:border-gray-700/30">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white font-bold text-2xl shadow-xl">CP</div>
+        <h1 class="text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-sky-500 bg-clip-text text-transparent">CloudProyek</h1>
+      </div>
+      <button id="theme-toggle" class="p-3 rounded-xl hover:bg-gray-200/60 dark:hover:bg-gray-800/60 transition">
+        <i class="fas fa-moon text-2xl text-gray-700 dark:text-gray-300"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-6 py-16">
+    <div class="text-center mb-16">
+      <h2 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-5 bg-gradient-to-r from-indigo-700 to-sky-600 bg-clip-text text-transparent">Control Center</h2>
+      <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto font-light">
+        Kelola pengiriman data dan pantau perangkat secara real-time dengan antarmuka premium yang intuitif dan elegan.
+      </p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-12 xl:gap-16">
+
+      <!-- User Area -->
+      <section class="glass rounded-3xl p-10 md:p-12 shadow-2xl">
+        <div class="flex items-center gap-6 mb-12">
+          <div class="w-18 h-18 rounded-2xl bg-indigo-100/80 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-5xl shadow-inner">
+            <i class="fas fa-users"></i>
+          </div>
+          <div>
+            <h2 class="text-4xl font-bold tracking-tight">Area Pengguna</h2>
+            <p class="text-lg text-gray-500 dark:text-gray-400 mt-1">Kirim data langsung dari perangkat Anda</p>
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-3 gap-8">
+          <a href="gps/index.html" target="_blank" class="card-link glass p-8 border border-transparent">
+            <div class="icon text-center mb-6 text-7xl text-indigo-500 dark:text-sky-400"><i class="fas fa-map-marker-alt"></i></div>
+            <h3 class="text-2xl font-semibold mb-3 text-center">GPS Tracker</h3>
+            <p class="text-center text-gray-600 dark:text-gray-300 text-base">Posisi real-time dev-001</p>
+          </a>
+          <a href="accel/index.html" target="_blank" class="card-link glass p-8 border border-transparent">
+            <div class="icon text-center mb-6 text-7xl text-indigo-500 dark:text-sky-400"><i class="fas fa-tachometer-alt"></i></div>
+            <h3 class="text-2xl font-semibold mb-3 text-center">Accelerometer</h3>
+            <p class="text-center text-gray-600 dark:text-gray-300 text-base">Data percepatan sensor</p>
+          </a>
+          <a href="kamera/index.html" target="_blank" class="card-link glass p-8 border border-transparent">
+            <div class="icon text-center mb-6 text-7xl text-indigo-500 dark:text-sky-400"><i class="fas fa-qrcode"></i></div>
+            <h3 class="text-2xl font-semibold mb-3 text-center">QR Absensi</h3>
+            <p class="text-center text-gray-600 dark:text-gray-300 text-base">Scan & catat kehadiran</p>
+          </a>
+        </div>
+      </section>
+
+      <!-- Monitoring Area -->
+      <section class="glass rounded-3xl p-10 md:p-12 shadow-2xl">
+        <div class="flex items-center gap-6 mb-12">
+          <div class="w-18 h-18 rounded-2xl bg-sky-100/80 dark:bg-sky-900/40 flex items-center justify-center text-sky-600 dark:text-sky-400 text-5xl shadow-inner">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div>
+            <h2 class="text-4xl font-bold tracking-tight">Monitoring Dashboard</h2>
+            <p class="text-lg text-gray-500 dark:text-gray-400 mt-1">Pantau data terkini dari Apps Script</p>
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-3 gap-8">
+          <a href="https://script.google.com/macros/s/AKfycbwNogBuBaF2IQNONrNmvLDvbjjMTQxyG_yXX3pLKK5xP_po02HS8u_2hdjUybqPdI5I/exec" target="_blank" class="card-link glass p-8 border border-transparent">
+            <div class="icon text-center mb-6 text-7xl text-sky-500 dark:text-sky-400"><i class="fas fa-qrcode"></i></div>
+            <h3 class="text-2xl font-semibold mb-3 text-center">QR Absensi</h3>
+            <p class="text-center text-gray-600 dark:text-gray-300 text-base font-medium">Log kehadiran terbaru</p>
+          </a>
+          <a href="https://script.google.com/macros/s/AKfycbwRJ_WR-1vIkAGA_7UrE9Gfs7Nu7ToyXv-_fx0wQhTT3x8xcFYUvPjJkXNEYCAPumh0CQ/exec" target="_blank" class="card-link glass p-8 border border-transparent">
+            <div class="icon text-center mb-6 text-7xl text-sky-500 dark:text-sky-400"><i class="fas fa-map-marker-alt"></i></div>
+            <h3 class="text-2xl font-semibold mb-3 text-center">GPS Logs</h3>
+            <p class="text-center text-gray-600 dark:text-gray-300 text-base font-medium">Riwayat posisi perangkat</p>
+          </a>
+          <a href="https://script.google.com/macros/s/AKfycbx8mWC5uYSqxTHeVYOkmEmSifeVqeC3YF0QPhD5D75vreluHAqhkUFjOwBd0Y4BWTOl/exec" target="_blank" class="card-link glass p-8 border border-transparent">
+            <div class="icon text-center mb-6 text-7xl text-sky-500 dark:text-sky-400"><i class="fas fa-tachometer-alt"></i></div>
+            <h3 class="text-2xl font-semibold mb-3 text-center">Accelerometer</h3>
+            <p class="text-center text-gray-600 dark:text-gray-300 text-base font-medium">Data sensor terkini</p>
+          </a>
+        </div>
+      </section>
+
+    </div>
+
+    <footer class="mt-24 text-center text-gray-500 dark:text-gray-400 text-base">
+      © 2026 CloudProyek • Dirancang dengan presisi untuk pengalaman terbaik • Powered by Tailwind & Inter
+    </footer>
+  </main>
+
+  <script>
+    // Dark mode toggle
+    const toggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    const icon = toggle.querySelector('i');
+
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      html.classList.add('dark');
+      icon.classList.replace('fa-moon', 'fa-sun');
+    }
+
+    toggle.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      if (html.classList.contains('dark')) {
+        localStorage.theme = 'dark';
+        icon.classList.replace('fa-moon', 'fa-sun');
+      } else {
+        localStorage.theme = 'light';
+        icon.classList.replace('fa-sun', 'fa-moon');
+      }
+    });
+
+    // Ripple effect lebih smooth
+    document.querySelectorAll('.card-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        const rect = link.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        ripple.style.width = '80px';
+        ripple.style.height = '80px';
+        link.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 800);
+      });
+    });
+  </script>
+
+</body>
+</html>
