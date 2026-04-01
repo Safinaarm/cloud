@@ -1,4 +1,13 @@
-const DEVICE_ID = "dev-001";
+// ======================================
+// DEVICE ID (AUTO UNIK PER DEVICE)
+// ======================================
+let DEVICE_ID = localStorage.getItem("device_id");
+
+if (!DEVICE_ID) {
+  DEVICE_ID = "dev-" + Math.random().toString(36).substr(2, 9);
+  localStorage.setItem("device_id", DEVICE_ID);
+}
+
 const API_URL = "https://script.google.com/macros/s/AKfycbwRJ_WR-1vIkAGA_7UrE9Gfs7Nu7ToyXv-_fx0wQhTT3x8xcFYUvPjJkXNEYCAPumh0CQ/exec";
 
 let map;
@@ -6,8 +15,12 @@ let marker;
 let polyline;
 let watchId = null;
 let lastSend = 0;
-const MIN_SEND_INTERVAL = 5000; // ms
+const MIN_SEND_INTERVAL = 5000;
 
+
+// ======================================
+// INIT MAP
+// ======================================
 function initMap() {
   map = L.map("map").setView([-7.446, 112.718], 13);
 
@@ -15,13 +28,18 @@ function initMap() {
     maxZoom: 19,
     attribution: '© OpenStreetMap'
   }).addTo(map);
+
+  // ubah title sesuai device
+  document.title = "GPS Tracker - " + DEVICE_ID;
 }
 
+
+// ======================================
+// UPDATE MAP
+// ======================================
 function updateMap(lat, lng) {
   if (!marker) {
-    marker = L.marker([lat, lng], {
-      // bisa tambah icon custom nanti
-    }).addTo(map);
+    marker = L.marker([lat, lng]).addTo(map);
   } else {
     marker.setLatLng([lat, lng]);
   }
@@ -40,6 +58,10 @@ function updateMap(lat, lng) {
   map.panTo([lat, lng], { animate: true, duration: 0.8 });
 }
 
+
+// ======================================
+// KIRIM GPS
+// ======================================
 function sendGPS(lat, lng, accuracy) {
   const now = Date.now();
   if (now - lastSend < MIN_SEND_INTERVAL) return;
@@ -55,14 +77,17 @@ function sendGPS(lat, lng, accuracy) {
     accuracy_m: Math.round(accuracy)
   });
 
-  // Menggunakan Image untuk bypass CORS (metode lama tapi masih efektif)
   const img = new Image();
   img.src = `${API_URL}?${params.toString()}`;
 
   document.getElementById("status").textContent =
-    `Terkirim: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    `[${DEVICE_ID}] ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 }
 
+
+// ======================================
+// START TRACKING
+// ======================================
 function startTracking() {
   if (!navigator.geolocation) {
     alert("Browser tidak mendukung Geolocation");
@@ -90,6 +115,10 @@ function startTracking() {
   );
 }
 
+
+// ======================================
+// STOP TRACKING
+// ======================================
 function stopTracking() {
   if (watchId !== null) {
     navigator.geolocation.clearWatch(watchId);
@@ -101,9 +130,15 @@ function stopTracking() {
   document.getElementById("status").textContent = "Tracking dihentikan";
 }
 
-// Event listeners
+
+// ======================================
+// EVENT
+// ======================================
 document.getElementById("start").addEventListener("click", startTracking);
 document.getElementById("stop").addEventListener("click", stopTracking);
 
-// Mulai
+
+// ======================================
+// INIT
+// ======================================
 initMap();
