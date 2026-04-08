@@ -365,11 +365,21 @@ function flyToDevice(deviceId) {
 
 async function loadData(){
   try {
+    console.log("📡 Fetching from:", API_URL + "?action=latest_all");
     const res = await fetch(API_URL + "?action=latest_all");
     const json = await res.json();
-    if (!json.ok) return;
+    
+    console.log("✅ Response:", json);
+    
+    if (!json.ok) {
+      console.warn("⚠️ Response not ok:", json);
+      return;
+    }
+
+    console.log("📍 Found devices:", json.data.length);
 
     json.data.forEach(d => {
+      console.log(`📌 Processing device: ${d.device_id} at ${d.lat}, ${d.lng}`);
       if (markers[d.device_id]) {
         markers[d.device_id].setLatLng([d.lat, d.lng]);
       } else {
@@ -384,6 +394,7 @@ async function loadData(){
             </div>
           `);
         markers[d.device_id] = marker;
+        console.log(`✨ Marker created for ${d.device_id}`);
       }
 
       if (isFirstLoad) {
@@ -395,7 +406,7 @@ async function loadData(){
     updateDeviceList(json.data);
     updateTimestamp();
   } catch(e) {
-    console.log(e);
+    console.error("❌ ERROR:", e);
   }
 }
 
