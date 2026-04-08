@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPS Monitoring</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #818cf8;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --bg: #0f0e17;
+      --card-bg: #1a1929;
+      --card-border: rgba(255,255,255,0.07);
+      --text: #f0eff7;
+      --text-muted: #a09fc0;
+      --radius: 20px;
+    }
+
+    html, body { height: 100%; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); overflow: hidden; }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(79,70,229,0.25) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(6,182,212,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 60% 40%, rgba(129,140,248,0.08) 0%, transparent 50%);
+      z-index: 0; pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(79,70,229,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79,70,229,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: 0; pointer-events: none;
+    }
+
+    #map {
+      height: 100vh; width: 100%;
+      position: absolute; inset: 0; z-index: 1;
+      filter: saturate(0.25) brightness(0.45) hue-rotate(200deg);
+    }
+
+    .ui-layer {
+      position: absolute; inset: 0; z-index: 10; pointer-events: none;
+    }
+    .ui-layer > * { pointer-events: auto; }
+
+    /* Header */
+    .header {
+      position: absolute;
+      top: 20px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 100px;
+      padding: 10px 20px 10px 10px;
+      white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04) inset;
+      backdrop-filter: blur(20px);
+    }
+
+    .header::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      border-radius: 100px 100px 0 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    }
+
+    .app-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(79,70,229,0.4);
+      flex-shrink: 0;
+    }
+
+    .app-icon svg { width: 18px; height: 18px; fill: white; }
+
+    .header-title {
+      font-size: 15px; font-weight: 800; color: var(--text); letter-spacing: -0.3px;
+    }
+    .header-title span { color: var(--primary-light); }
+
+    .header-sub { font-size: 11px; color: var(--text-muted); }
+
+    .live-badge {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 20px; padding: 3px 10px;
+      font-size: 10px; font-weight: 700; color: #6ee7b7; letter-spacing: 0.5px;
+    }
+
+    .live-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--success); box-shadow: 0 0 6px var(--success);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* Stats */
+    .stats-panel {
+      position: absolute; top: 20px; left: 20px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px; padding: 14px 18px; min-width: 148px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      position: relative; overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    }
+
+    .stat-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 26px; font-weight: 800; color: var(--primary-light);
+      letter-spacing: -1px; line-height: 1;
+    }
+    .stat-value.green { color: #6ee7b7; }
+
+    /* Device panel */
+    .device-panel {
+      position: absolute; bottom: 20px; left: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 16px; min-width: 240px; max-width: 268px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset;
+      position: absolute; overflow: hidden;
+    }
+
+    .device-panel::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    }
+
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px; padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .panel-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--text-muted);
+    }
+
+    .auto-badge {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
+      color: #67e8f9; background: rgba(6,182,212,0.1);
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 20px; padding: 2px 8px;
+    }
+
+    #device-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
+    #device-list::-webkit-scrollbar { width: 3px; }
+    #device-list::-webkit-scrollbar-thumb { background: rgba(79,70,229,0.4); border-radius: 2px; }
+
+    .device-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid transparent;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+
+    .device-item:hover {
+      background: rgba(79,70,229,0.1);
+      border-color: rgba(79,70,229,0.25);
+    }
+
+    .device-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--success); box-shadow: 0 0 8px var(--success); flex-shrink: 0;
+    }
+
+    .device-name { font-size: 12px; font-weight: 700; color: var(--text); flex: 1; }
+    .device-coords { font-size: 10px; color: var(--text-muted); }
+    .empty-state { font-size: 12px; color: var(--text-muted); padding: 4px 2px; }
+
+    /* Timestamp */
+    .timestamp {
+      position: absolute; bottom: 20px; right: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px; padding: 10px 16px;
+      font-size: 12px; font-weight: 600; color: var(--text-muted);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      letter-spacing: 0.3px;
+    }
+
+    /* Leaflet overrides */
+    .leaflet-control-zoom {
+      border: 1px solid rgba(79,70,229,0.3) !important;
+      border-radius: 14px !important; overflow: hidden;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
+    }
+    .leaflet-control-zoom a {
+      background: var(--card-bg) !important;
+      color: var(--text-muted) !important;
+      border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+      width: 30px !important; height: 30px !important;
+      line-height: 30px !important; font-size: 16px !important; font-weight: 700 !important;
+      transition: all 0.2s !important;
+    }
+    .leaflet-control-zoom a:hover {
+      background: rgba(79,70,229,0.15) !important;
+      color: var(--primary-light) !important;
+    }
+    .leaflet-control-attribution { display: none !important; }
+    .leaflet-popup-content-wrapper {
+      background: var(--card-bg) !important;
+      border: 1px solid rgba(79,70,229,0.3) !important;
+      border-radius: 16px !important;
+      color: var(--text) !important;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.6) !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      backdrop-filter: blur(20px) !important;
+    }
+    .leaflet-popup-tip-container { display: none; }
+    .leaflet-popup-close-button { color: var(--text-muted) !important; font-size: 18px !important; }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div class="ui-layer">
+
+  <div class="header">
+    <div class="app-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+    </div>
+    <div>
+      <div class="header-title">GPS<span>Monitor</span></div>
+      <div class="header-sub">Semua Device · Live</div>
+    </div>
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+  </div>
+
+  <div class="stats-panel">
+    <div class="stat-card">
+      <div class="stat-label">Devices Online</div>
+      <div class="stat-value green" id="stat-count">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Interval</div>
+      <div class="stat-value">3s</div>
+    </div>
+  </div>
+
+  <div class="device-panel">
+    <div class="panel-header">
+      <span class="panel-title">Active Devices</span>
+      <span class="auto-badge">AUTO REFRESH</span>
+    </div>
+    <div id="device-list">
+      <div class="empty-state">Menunggu data...</div>
+    </div>
+  </div>
+
+  <div class="timestamp" id="timestamp">––/––/–––– · ––:––:––</div>
+
+</div>
+
+<script>
+
+const API_URL = "<?= ScriptApp.getService().getUrl() ?>";
+
+let map;
+let markers = {};
+let isFirstLoad = true;
+
+function initMap(){
+  map = L.map('map').setView([-7.2575,112.7521], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(map);
+}
+
+function createCustomIcon(deviceId) {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="38" height="46" viewBox="0 0 38 46">
+      <defs>
+        <radialGradient id="ig" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#818cf8"/>
+          <stop offset="100%" stop-color="#4f46e5"/>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <circle cx="19" cy="19" r="17" fill="#1a1929" stroke="#4f46e5" stroke-width="1.5" filter="url(#glow)"/>
+      <circle cx="19" cy="19" r="6" fill="url(#ig)"/>
+      <circle cx="19" cy="19" r="11" fill="none" stroke="#818cf8" stroke-width="0.8" opacity="0.5"/>
+      <circle cx="19" cy="19" r="14" fill="none" stroke="#4f46e5" stroke-width="0.5" opacity="0.3"/>
+      <line x1="19" y1="36" x2="19" y2="46" stroke="#818cf8" stroke-width="1.5" opacity="0.5"/>
+    </svg>
+  `;
+  return L.divIcon({ html: svg, className: '', iconSize: [38,46], iconAnchor: [19,46], popupAnchor: [0,-48] });
+}
+
+function updateTimestamp() {
+  const now = new Date();
+  const t = now.toLocaleTimeString('id-ID', { hour12: false });
+  const d = now.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+  document.getElementById('timestamp').textContent = d + ' · ' + t;
+}
+
+function updateDeviceList(data) {
+  document.getElementById('stat-count').textContent = data.length;
+  const list = document.getElementById('device-list');
+  if (!data.length) {
+    list.innerHTML = '<div class="empty-state">Tidak ada device aktif</div>';
+    return;
+  }
+  list.innerHTML = data.map(d => `
+    <div class="device-item" onclick="flyToDevice('${d.device_id}')">
+      <div class="device-dot"></div>
+      <div class="device-name">${d.device_id}</div>
+      <div class="device-coords">${parseFloat(d.lat).toFixed(4)}, ${parseFloat(d.lng).toFixed(4)}</div>
+    </div>
+  `).join('');
+}
+
+function flyToDevice(deviceId) {
+  if (markers[deviceId]) {
+    map.flyTo(markers[deviceId].getLatLng(), 16, { duration: 1.2 });
+    markers[deviceId].openPopup();
+  }
+}
+
+async function loadData(){
+  try {
+    const res = await fetch(API_URL + "?action=latest_all");
+    const json = await res.json();
+    if (!json.ok) return;
+
+    json.data.forEach(d => {
+      if (markers[d.device_id]) {
+        markers[d.device_id].setLatLng([d.lat, d.lng]);
+      } else {
+        const marker = L.marker([d.lat, d.lng], { icon: createCustomIcon(d.device_id) })
+          .addTo(map)
+          .bindPopup(`
+            <div style="padding:4px 2px;font-family:'Plus Jakarta Sans',sans-serif;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#a09fc0;margin-bottom:4px">Device ID</div>
+              <div style="font-size:15px;font-weight:800;color:#818cf8;margin-bottom:12px">${d.device_id}</div>
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#a09fc0;margin-bottom:4px">Koordinat</div>
+              <div style="font-size:13px;font-weight:600;color:#f0eff7">${parseFloat(d.lat).toFixed(6)}, ${parseFloat(d.lng).toFixed(6)}</div>
+            </div>
+          `);
+        markers[d.device_id] = marker;
+      }
+
+      if (isFirstLoad) {
+        map.flyTo([d.lat, d.lng], 15);
+        isFirstLoad = false;
+      }
+    });
+
+    updateDeviceList(json.data);
+    updateTimestamp();
+  } catch(e) {
+    console.log(e);
+  }
+}
+
+setInterval(updateTimestamp, 1000);
+initMap();
+loadData();
+setInterval(loadData, 3000);
+
+</script>
+</body>
+</html>
