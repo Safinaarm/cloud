@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GPS Monitoring</title>
+  <title>Admin - GPS Monitoring</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -12,80 +12,99 @@
     html, body {
       height: 100%;
       margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     #map {
       height: 100vh;
       width: 100%;
+      z-index: 1; /* Pastikan peta ada di bawah judul */
     }
 
     h2 {
       position: absolute;
-      top: 10px;
+      top: 15px;
       left: 50%;
       transform: translateX(-50%);
       background: white;
-      padding: 10px;
-      border-radius: 10px;
-      z-index: 1000;
+      padding: 12px 24px;
+      border-radius: 12px;
+      z-index: 1000; /* Pastikan judul di atas peta */
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      margin: 0;
+      font-size: 18px;
+      color: #333;
     }
   </style>
 </head>
 <body>
 
-<h2>📡 Monitoring Semua Device</h2>
-<div id="map"></div>
+  <h2>📡 Monitoring Semua Device</h2>
+  <div id="map"></div>
 
-<script>
+  <script>
+    // URL Web App GAS Anda (saya menggunakan URL dari kode sebelumnya)
+    const API_URL = "https://script.google.com/macros/s/AKfycbyAJ1kCkBIyez7odSwdWMJ86Nm_uTWYfOb2zpTjbDQ-TB5E4qsfUw_4wVyUBkF1F8ih/exec";
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwRJ_WR-1vIkAGA_7UrE9Gfs7Nu7ToyXv-_fx0wQhTT3x8xcFYUvPjJkXNEYCAPumh0CQ/exec";
+    let map;
+    let markers = {};
+    let isFirstLoad = true;
 
-let map;
-let markers = {};
-let isFirstLoad = true;
+    function initMap(){
+      // Inisialisasi peta dengan titik tengah default
+      map = L.map('map').setView([-7.2575, 112.7521], 13);
 
-function initMap(){
-  map = L.map('map').setView([-7.2575,112.7521], 13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
-  }).addTo(map);
-}
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+    }
 
-async function loadData(){
-  try{
-    const res = await fetch(API_URL + "?action=latest_all");
-    const json = await res.json();
+    async function loadData(){
+      try{
+        // Memanggil GAS untuk mendapatkan data lokasi terbaru
+        const res = await fetch(API_URL + "?action=latest_all", {
+          method: 'GET',
+          cache: 'no-store' // Penting: Mencegah browser melakukan cache pada data GPS
+        });
+        
+        const json = await res.json();
 
-    if(!json.ok) return;
+        if(!json.ok) return;
 
-    json.data.forEach(d => {
+        json.data.forEach(d => {
+          if(markers[d.device_id]){
+            // Update posisi jika marker sudah ada
+            markers[d.device_id].setLatLng([d.lat, d.lng]);
+          } else {
+            // Buat marker baru jika belum ada
+            const marker = L.marker([d.lat, d.lng])
+              .addTo(map)
+              .bindPopup("<b>Device ID:</b><br>" + d.device_id);
 
-      if(markers[d.device_id]){
-        markers[d.device_id].setLatLng([d.lat, d.lng]);
-      } else {
-        const marker = L.marker([d.lat, d.lng])
-          .addTo(map)
-          .bindPopup("Device: " + d.device_id);
+            markers[d.device_id] = marker;
+          }
 
-        markers[d.device_id] = marker;
+          // Arahkan kamera ke perangkat yang pertama kali termuat
+          if(isFirstLoad){
+            map.flyTo([d.lat, d.lng], 15);
+            isFirstLoad = false;
+          }
+        });
+
+      } catch(e){
+        console.error("Gagal mengambil data GPS:", e);
       }
+    }
 
-      if(isFirstLoad){
-        map.flyTo([d.lat, d.lng], 15);
-        isFirstLoad = false;
-      }
+    // Jalankan peta dan ambil data pertama kali
+    initMap();
+    loadData();
+    
+    // Polling data setiap 3 detik
+    setInterval(loadData, 3000);
 
-    });
+  </script>
 
-  } catch(e){
-    console.log(e);
-  }
-}
-
-initMap();
-loadData();
-setInterval(loadData, 3000);
-
-</script>
 </body>
 </html>
