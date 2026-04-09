@@ -1,5 +1,5 @@
 // ======================================
-// DEVICE ID (AUTO UNIK PER DEVICE)
+// DEVICE ID
 // ======================================
 let DEVICE_ID = localStorage.getItem("device_id");
 
@@ -17,37 +17,36 @@ let watchId = null;
 let lastSend = 0;
 const MIN_SEND_INTERVAL = 5000;
 
-
 // ======================================
 // INIT MAP
 // ======================================
 function initMap() {
-  map = L.map("map").setView([-7.446, 112.718], 13);
+  map = L.map("map", { zoomControl: true }).setView([-7.446, 112.718], 15);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
-    attribution: '© OpenStreetMap'
+    attribution: '© OpenStreetMap contributors'
   }).addTo(map);
 
-  // ubah title sesuai device
-  document.title = "GPS Tracker - " + DEVICE_ID;
+  // Tampilkan device id di panel
+  document.getElementById("device-name").textContent = DEVICE_ID;
+  document.title = `GPS Tracker - ${DEVICE_ID}`;
 }
-
 
 // ======================================
 // UPDATE MAP
 // ======================================
 function updateMap(lat, lng) {
   if (!marker) {
-    marker = L.marker([lat, lng]).addTo(map);
+    marker = L.marker([lat, lng], { riseOnHover: true }).addTo(map);
   } else {
     marker.setLatLng([lat, lng]);
   }
 
   if (!polyline) {
     polyline = L.polyline([], {
-      color: "#3b82f6",
-      weight: 5,
+      color: "#22d3ee",
+      weight: 6,
       opacity: 0.85,
       lineCap: 'round',
       lineJoin: 'round'
@@ -55,9 +54,8 @@ function updateMap(lat, lng) {
   }
 
   polyline.addLatLng([lat, lng]);
-  map.panTo([lat, lng], { animate: true, duration: 0.8 });
+  map.panTo([lat, lng], { animate: true, duration: 1 });
 }
-
 
 // ======================================
 // KIRIM GPS
@@ -80,10 +78,12 @@ function sendGPS(lat, lng, accuracy) {
   const img = new Image();
   img.src = `${API_URL}?${params.toString()}`;
 
-  document.getElementById("status").textContent =
-    `[${DEVICE_ID}] ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  document.getElementById("status").textContent = 
+    `📍 ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  
+  document.getElementById("last-update").textContent = 
+    `Terakhir update: ${new Date().toLocaleTimeString('id-ID')}`;
 }
-
 
 // ======================================
 // START TRACKING
@@ -96,7 +96,7 @@ function startTracking() {
 
   document.getElementById("start").style.display = "none";
   document.getElementById("stop").style.display = "inline-block";
-  document.getElementById("status").textContent = "Mencari posisi...";
+  document.getElementById("status").textContent = "🔄 Mencari sinyal GPS...";
 
   watchId = navigator.geolocation.watchPosition(
     (pos) => {
@@ -105,7 +105,7 @@ function startTracking() {
       sendGPS(lat, lng, accuracy);
     },
     (err) => {
-      document.getElementById("status").textContent = `GPS error: ${err.message}`;
+      document.getElementById("status").textContent = `❌ GPS Error: ${err.message}`;
     },
     {
       enableHighAccuracy: true,
@@ -114,7 +114,6 @@ function startTracking() {
     }
   );
 }
-
 
 // ======================================
 // STOP TRACKING
@@ -127,16 +126,15 @@ function stopTracking() {
 
   document.getElementById("start").style.display = "inline-block";
   document.getElementById("stop").style.display = "none";
-  document.getElementById("status").textContent = "Tracking dihentikan";
+  document.getElementById("status").textContent = "Tracking telah dihentikan";
+  document.getElementById("last-update").textContent = "";
 }
 
-
 // ======================================
-// EVENT
+// EVENT LISTENER
 // ======================================
 document.getElementById("start").addEventListener("click", startTracking);
 document.getElementById("stop").addEventListener("click", stopTracking);
-
 
 // ======================================
 // INIT
