@@ -3,51 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Accel • Live Motion Cloud</title>
+  <title>Accel • Live Motion Sensor</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="container">
+    
+    <!-- Header -->
     <header>
-      <h1>Accel • Live Motion</h1>
-      <p class="subtitle">Kirim gerakan HP ke cloud secara real-time</p>
+      <div class="header-content">
+        <div class="logo">
+          <i class="fas fa-waveform-lines"></i>
+          <h1>Accel Live</h1>
+        </div>
+        <p class="subtitle">Real-time Motion Sensor • Kirim ke Cloud</p>
+      </div>
+      
+      <div class="device-info">
+        <span class="device-id">Device: <strong>dev-001</strong></span>
+      </div>
     </header>
 
-    <div class="glass-card control-section">
-      <div class="control-bar">
-        <button id="btnStart" class="btn primary">START</button>
-        <button id="btnStop" class="btn danger" disabled>STOP</button>
+    <!-- Control Card -->
+    <div class="glass-card control-card">
+      <div class="control-header">
+        <h2><i class="fas fa-mobile-alt"></i> Sensor Control</h2>
+        <div id="status" class="status offline">
+          <span class="dot"></span>
+          Siap dimulai
+        </div>
       </div>
 
-      <div id="status" class="status offline">Siap dimulai</div>
+      <div class="control-bar">
+        <button id="btnStart" class="btn primary">
+          <i class="fas fa-play"></i> START MONITORING
+        </button>
+        <button id="btnStop" class="btn danger" disabled>
+          <i class="fas fa-stop"></i> STOP
+        </button>
+      </div>
 
-      <div class="readout">
+      <!-- Real-time Readout -->
+      <div class="readout-grid">
         <div class="axis-card">
           <div class="axis-label">X Axis</div>
           <div class="axis-value" id="xVal">—</div>
+          <div class="axis-unit">m/s²</div>
         </div>
         <div class="axis-card">
           <div class="axis-label">Y Axis</div>
           <div class="axis-value" id="yVal">—</div>
+          <div class="axis-unit">m/s²</div>
         </div>
         <div class="axis-card">
           <div class="axis-label">Z Axis</div>
           <div class="axis-value" id="zVal">—</div>
+          <div class="axis-unit">m/s²</div>
         </div>
       </div>
 
-      <div class="magnitude" id="mag">Magnitude: — g</div>
+      <div class="magnitude" id="mag">Magnitude: — <span class="unit">g</span></div>
     </div>
 
-    <div class="glass-card chart-section">
-      <h3>Waveform Gerakan</h3>
+    <!-- Chart Card -->
+    <div class="glass-card chart-card">
+      <div class="chart-header">
+        <h3>Waveform Gerakan Real-time</h3>
+        <span class="update-info">60 titik terakhir • Update setiap 1.5 detik</span>
+      </div>
       <canvas id="chart"></canvas>
-      <div class="info">60 titik terakhir • kirim ke cloud ~setiap 1.5 detik</div>
     </div>
+
   </div>
 
   <script src="script.js"></script>
