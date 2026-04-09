@@ -1,7 +1,7 @@
 :root {
   --bg-start: #0f172a;
   --bg-end: #1e293b;
-  --glass: rgba(30, 41, 59, 0.65);
+  --glass: rgba(30, 41, 59, 0.68);
   --accent: #6366f1;
   --accent-glow: #818cf8;
   --green: #22c55e;
@@ -30,32 +30,32 @@ body {
   margin: 0 auto;
 }
 
-/* Header */
+/* ==================== HEADER ==================== */
 header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 }
 
 .header-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  margin-bottom: 8px;
+  gap: 12px;
+  margin-bottom: 6px;
 }
 
 .logo i {
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   color: #a5b4fc;
 }
 
 .logo h1 {
-  font-size: 2.6rem;
+  font-size: 2.5rem;
   font-weight: 800;
   background: linear-gradient(90deg, #a5b4fc, #c084fc, #f472b6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: -1.5px;
+  letter-spacing: -1.2px;
 }
 
 .subtitle {
@@ -65,39 +65,68 @@ header {
 }
 
 .device-info {
-  margin-top: 12px;
+  margin-top: 8px;
   font-size: 0.95rem;
   color: var(--text-dim);
 }
 
-/* Glass Card */
+/* ==================== TOMBOL BACK ==================== */
+.btn-back {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  background: rgba(30, 41, 59, 0.9);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  padding: 10px 20px;
+  border-radius: 9999px;
+  font-size: 14.5px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-back:hover {
+  background: rgba(99, 102, 241, 0.3);
+  border-color: #818cf8;
+  color: #c4d0ff;
+  transform: translateX(-4px);
+}
+
+/* ==================== GLASS CARD ==================== */
 .glass-card {
   background: var(--glass);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(148, 163, 184, 0.3);
   border-radius: 28px;
-  padding: 32px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-  margin-bottom: 28px;
+  padding: 26px 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  margin-bottom: 22px;
   transition: all 0.4s ease;
 }
 
 .glass-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 30px 70px rgba(0,0,0,0.55);
+  transform: translateY(-6px);
+  box-shadow: 0 25px 65px rgba(0,0,0,0.55);
 }
 
-/* Control Section */
+/* ==================== CONTROL SECTION ==================== */
 .control-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 28px;
+  margin-bottom: 22px;
 }
 
 .control-header h2 {
-  font-size: 1.5rem;
+  font-size: 1.45rem;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -109,39 +138,41 @@ header {
   align-items: center;
   gap: 8px;
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 .dot {
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   background: var(--red);
   animation: pulse 2s infinite;
 }
 
-.status.online .dot { background: var(--green); }
+.status.online .dot { 
+  background: var(--green); 
+}
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  50% { opacity: 0.45; }
 }
 
 .control-bar {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   justify-content: center;
-  margin-bottom: 32px;
+  margin-bottom: 26px;
 }
 
 .btn {
   flex: 1;
-  max-width: 260px;
-  padding: 16px 32px;
-  font-size: 1.1rem;
+  max-width: 240px;
+  padding: 15px 28px;
+  font-size: 1.05rem;
   font-weight: 700;
   border: none;
-  border-radius: 18px;
+  border-radius: 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -157,7 +188,7 @@ header {
 }
 
 .primary:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
 }
 
@@ -167,7 +198,7 @@ header {
 }
 
 .danger:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
 }
 
@@ -178,85 +209,109 @@ header {
   box-shadow: none;
 }
 
-/* Readout */
+/* ==================== READOUT ==================== */
 .readout-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 16px;
-  margin: 24px 0;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin: 18px 0 22px;
 }
 
 .axis-card {
   background: rgba(15, 23, 42, 0.7);
-  border-radius: 20px;
-  padding: 22px 16px;
+  border-radius: 18px;
+  padding: 18px 14px;
   text-align: center;
   border: 1px solid rgba(148, 163, 184, 0.25);
   transition: all 0.3s ease;
 }
 
 .axis-card:hover {
-  transform: scale(1.06);
+  transform: scale(1.05);
   border-color: var(--accent);
 }
 
 .axis-label {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-dim);
   margin-bottom: 6px;
 }
 
 .axis-value {
-  font-size: 2.4rem;
+  font-size: 2.15rem;
   font-weight: 800;
   color: var(--accent-glow);
-  text-shadow: 0 0 15px rgba(129, 140, 248, 0.5);
+  text-shadow: 0 0 12px rgba(129, 140, 248, 0.5);
 }
 
 .axis-unit {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-dim);
   margin-top: 4px;
 }
 
 .magnitude {
   text-align: center;
-  font-size: 1.65rem;
+  font-size: 1.55rem;
   font-weight: 700;
   color: #e0e7ff;
-  margin-top: 20px;
+  margin-top: 12px;
 }
 
-.unit { font-size: 1rem; color: var(--text-dim); }
+.unit {
+  font-size: 1rem;
+  color: var(--text-dim);
+}
 
-/* Chart */
+/* ==================== CHART SECTION ==================== */
+.chart-card {
+  padding: 24px 22px;
+}
+
 .chart-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .chart-header h3 {
-  font-size: 1.45rem;
+  font-size: 1.4rem;
   color: #c4d0ff;
+  font-weight: 600;
 }
 
 .update-info {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--text-dim);
 }
 
 canvas {
+  width: 100% !important;
+  height: 240px !important;     /* Dibatasi agar tidak terlalu panjang */
   background: rgba(15, 23, 42, 0.6);
   border-radius: 20px;
-  padding: 12px;
   border: 1px solid rgba(148, 163, 184, 0.3);
 }
 
-/* Responsive */
+/* ==================== RESPONSIVE ==================== */
 @media (max-width: 640px) {
-  .glass-card { padding: 24px; }
-  .readout-grid { grid-template-columns: 1fr; }
-  .btn { padding: 14px 24px; font-size: 1rem; }
+  .glass-card {
+    padding: 22px 20px;
+    border-radius: 22px;
+  }
+  
+  .readout-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .btn {
+    padding: 14px 24px;
+    font-size: 1rem;
+  }
+  
+  .logo h1 {
+    font-size: 2.2rem;
+  }
 }
