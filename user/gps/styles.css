@@ -131,3 +131,31 @@ button:hover {
 .leaflet-popup-tip {
   background: #1e2937;
 }
+/* Tombol Back */
+.btn-back {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  padding: 12px 20px;
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  z-index: 2000;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(12px);
+  text-decoration: none;
+}
+
+.btn-back:hover {
+  background: rgba(34, 211, 238, 0.2);
+  border-color: #22d3ee;
+  color: #67e8f9;
+  transform: translateX(-4px);
+}
