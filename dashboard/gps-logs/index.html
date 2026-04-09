@@ -62,30 +62,32 @@
 
     async function loadData(){
       try{
-        // Memanggil GAS untuk mendapatkan data lokasi terbaru
-        const res = await fetch(API_URL + "?action=latest_all", {
-          method: 'GET',
-          cache: 'no-store' // Penting: Mencegah browser melakukan cache pada data GPS
-        });
-        
+        const res = await fetch(API_URL + "?action=latest_all");
         const json = await res.json();
 
-        if(!json.ok) return;
+        console.log("Response dari GAS:", json);
+
+        if(!json.ok) {
+          console.error("Error dari GAS:", json.error);
+          return;
+        }
+
+        if(!json.data || json.data.length === 0){
+          console.log("Belum ada data GPS");
+          return;
+        }
 
         json.data.forEach(d => {
           if(markers[d.device_id]){
-            // Update posisi jika marker sudah ada
             markers[d.device_id].setLatLng([d.lat, d.lng]);
           } else {
-            // Buat marker baru jika belum ada
             const marker = L.marker([d.lat, d.lng])
               .addTo(map)
-              .bindPopup("<b>Device ID:</b><br>" + d.device_id);
+              .bindPopup("Device: " + d.device_id);
 
             markers[d.device_id] = marker;
           }
 
-          // Arahkan kamera ke perangkat yang pertama kali termuat
           if(isFirstLoad){
             map.flyTo([d.lat, d.lng], 15);
             isFirstLoad = false;
@@ -93,7 +95,7 @@
         });
 
       } catch(e){
-        console.error("Gagal mengambil data GPS:", e);
+        console.error("Error:", e);
       }
     }
 
