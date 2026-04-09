@@ -3,56 +3,230 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - GPS Monitoring</title>
+  <title>📍 GPS Monitoring Real-time</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --primary: #22d3ee;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     html, body {
       height: 100%;
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      overflow: hidden;
     }
 
     #map {
       height: 100vh;
       width: 100%;
-      z-index: 1; /* Pastikan peta ada di bawah judul */
     }
 
-    h2 {
+    /* Header */
+    .header {
       position: absolute;
-      top: 15px;
+      top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: white;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(12px);
       padding: 12px 24px;
-      border-radius: 12px;
-      z-index: 1000; /* Pastikan judul di atas peta */
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      margin: 0;
-      font-size: 18px;
-      color: #333;
+      border-radius: 9999px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid rgba(34, 211, 238, 0.25);
+    }
+
+    .header h1 {
+      font-size: 21px;
+      font-weight: 700;
+      color: #67e8f9;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Tombol Back */
+    .btn-back {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(15, 23, 42, 0.9);
+      color: #e2e8f0;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 12px 20px;
+      border-radius: 9999px;
+      font-size: 15px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      z-index: 2000;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(12px);
+      text-decoration: none;
+    }
+
+    .btn-back:hover {
+      background: rgba(34, 211, 238, 0.2);
+      border-color: var(--primary);
+      color: #67e8f9;
+      transform: translateX(-4px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: absolute;
+      top: 100px;
+      right: 20px;
+      width: 290px;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      z-index: 1500;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      max-height: 78vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      font-size: 16px;
+      margin-bottom: 16px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .device-item {
+      background: rgba(30, 41, 59, 0.85);
+      padding: 14px 16px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+
+    .device-item:hover {
+      background: rgba(34, 211, 238, 0.18);
+      border-color: var(--primary);
+      transform: translateX(6px);
+    }
+
+    .device-id {
+      font-weight: 600;
+      color: #67e8f9;
+      font-size: 15px;
+    }
+
+    .device-info {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* Status */
+    .status {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(12px);
+      padding: 10px 18px;
+      border-radius: 9999px;
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1500;
+      border: 1px solid rgba(34, 211, 238, 0.2);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      background: #22d3ee;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+
+    /* Leaflet Popup */
+    .leaflet-popup-content-wrapper {
+      background: #1e2937;
+      color: #e2e8f0;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .leaflet-popup-tip {
+      background: #1e2937;
     }
   </style>
 </head>
 <body>
 
-  <h2>📡 Monitoring Semua Device</h2>
+  <!-- Tombol Back -->
+  <a href="/index.html" class="btn-back">
+    ← Kembali ke Beranda
+  </a>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>📍 GPS Monitoring Real-time</h1>
+    <span id="device-count" style="background: rgba(34,211,238,0.2); color: #67e8f9; padding: 5px 14px; border-radius: 9999px; font-size: 14px; font-weight: 500;">
+      0 device
+    </span>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <h2>📱 Daftar Device Aktif</h2>
+    <div id="device-list"></div>
+  </div>
+
+  <!-- Status -->
+  <div class="status">
+    <span class="dot"></span>
+    <span id="last-update">Memuat data...</span>
+  </div>
+
   <div id="map"></div>
 
   <script>
-    // URL Web App GAS Anda (saya menggunakan URL dari kode sebelumnya)
-    const API_URL = "https://script.google.com/macros/s/AKfycbyAJ1kCkBIyez7odSwdWMJ86Nm_uTWYfOb2zpTjbDQ-TB5E4qsfUw_4wVyUBkF1F8ih/exec";
+    // GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT KAMU
+    const API_URL = "https://script.google.com/macros/s/AKfycbyCFr-2Vygs0AQgv3HAGgu8wU5a-7HnnQpshcloPUlSWZsoQWnwYBesmXO1te76LPUSxA/exec";
 
     let map;
     let markers = {};
     let isFirstLoad = true;
 
-    function initMap(){
-      // Inisialisasi peta dengan titik tengah default
-      map = L.map('map').setView([-7.2575, 112.7521], 13);
+    function initMap() {
+      map = L.map('map').setView([-7.2575, 112.7521], 12);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -60,52 +234,98 @@
       }).addTo(map);
     }
 
-    async function loadData(){
-      try{
-        const res = await fetch(API_URL + "?action=latest_all");
-        const json = await res.json();
+    function formatTime(ts) {
+      if (!ts) return "-";
+      const date = new Date(ts);
+      return date.toLocaleTimeString('id-ID', { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+      });
+    }
 
-        console.log("Response dari GAS:", json);
+    function updateDeviceList(data) {
+      const container = document.getElementById('device-list');
+      container.innerHTML = '';
+      document.getElementById('device-count').textContent = `${data.length} device`;
 
-        if(!json.ok) {
-          console.error("Error dari GAS:", json.error);
-          return;
-        }
+      data.forEach(d => {
+        const div = document.createElement('div');
+        div.className = 'device-item';
+        div.innerHTML = `
+          <div class="device-id">${d.device_id}</div>
+          <div class="device-info">
+            📍 ${d.lat.toFixed(5)}, ${d.lng.toFixed(5)}<br>
+            ⏱️ ${formatTime(d.ts)}
+          </div>
+        `;
 
-        if(!json.data || json.data.length === 0){
-          console.log("Belum ada data GPS");
-          return;
-        }
-
-        json.data.forEach(d => {
-          if(markers[d.device_id]){
-            markers[d.device_id].setLatLng([d.lat, d.lng]);
-          } else {
-            const marker = L.marker([d.lat, d.lng])
-              .addTo(map)
-              .bindPopup("Device: " + d.device_id);
-
-            markers[d.device_id] = marker;
-          }
-
-          if(isFirstLoad){
-            map.flyTo([d.lat, d.lng], 15);
-            isFirstLoad = false;
+        div.addEventListener('click', () => {
+          if (markers[d.device_id]) {
+            map.flyTo([d.lat, d.lng], 17, { duration: 1.5 });
+            markers[d.device_id].openPopup();
           }
         });
 
-      } catch(e){
-        console.error("Error:", e);
+        container.appendChild(div);
+      });
+    }
+
+    async function loadData() {
+      try {
+        const res = await fetch(API_URL + "?action=latest_all");
+        const json = await res.json();
+
+        if (!json.ok || !json.data || json.data.length === 0) return;
+
+        const data = json.data;
+
+        updateDeviceList(data);
+
+        data.forEach(d => {
+          const latlng = [Number(d.lat), Number(d.lng)];
+
+          if (markers[d.device_id]) {
+            markers[d.device_id].setLatLng(latlng);
+            markers[d.device_id].getPopup().setContent(`
+              <b>Device:</b> ${d.device_id}<br>
+              <b>Latitude:</b> ${d.lat.toFixed(6)}<br>
+              <b>Longitude:</b> ${d.lng.toFixed(6)}<br>
+              <b>Akurasi:</b> ${d.accuracy_m || 0} meter<br>
+              <b>Update:</b> ${formatTime(d.ts)}
+            `);
+          } else {
+            const marker = L.marker(latlng).addTo(map)
+              .bindPopup(`
+                <b>Device:</b> ${d.device_id}<br>
+                <b>Latitude:</b> ${d.lat.toFixed(6)}<br>
+                <b>Longitude:</b> ${d.lng.toFixed(6)}<br>
+                <b>Akurasi:</b> ${d.accuracy_m || 0} meter<br>
+                <b>Update:</b> ${formatTime(d.ts)}
+              `);
+
+            markers[d.device_id] = marker;
+          }
+        });
+
+        if (isFirstLoad && data.length > 0) {
+          const first = data[0];
+          map.flyTo([first.lat, first.lng], 15);
+          isFirstLoad = false;
+        }
+
+        document.getElementById('last-update').textContent = 
+          `Terakhir update: ${new Date().toLocaleTimeString('id-ID')}`;
+
+      } catch (e) {
+        console.error("Gagal mengambil data:", e);
       }
     }
 
-    // Jalankan peta dan ambil data pertama kali
+    // Inisialisasi
     initMap();
     loadData();
-    
-    // Polling data setiap 3 detik
-    setInterval(loadData, 3000);
-
+    setInterval(loadData, 3000);   // Update setiap 3 detik
   </script>
 
 </body>
