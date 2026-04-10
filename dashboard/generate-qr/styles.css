@@ -1,0 +1,418 @@
+/* ══════════════════════════════════════════════════════════════
+   CLOUDPROYEK - QR GENERATOR STYLES
+   Dark & Light Mode Support
+   ══════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────
+   VARIABLES & RESET
+   ───────────────────────────────────────────────────────────── */
+
+:root, [data-theme="dark"] {
+  --primary: #4f46e5;
+  --primary-light: #818cf8;
+  --accent: #06b6d4;
+  --success: #10b981;
+  --error: #ef4444;
+  --bg: #0f0e17;
+  --card-bg: #1a1929;
+  --card-border: rgba(255,255,255,0.07);
+  --text: #f0eff7;
+  --text-muted: #a09fc0;
+  --radius: 20px;
+}
+
+[data-theme="light"] {
+  --primary: #4f46e5;
+  --primary-light: #818cf8;
+  --accent: #06b6d4;
+  --success: #10b981;
+  --error: #ef4444;
+  --bg: #f4f3ff;
+  --card-bg: #ffffff;
+  --card-border: rgba(0,0,0,0.07);
+  --text: #1e1b3a;
+  --text-muted: #6b6a8a;
+  --radius: 20px;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BODY & BACKGROUND
+   ───────────────────────────────────────────────────────────── */
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(79,70,229,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(6,182,212,0.15) 0%, transparent 60%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CONTAINER & LAYOUT
+   ───────────────────────────────────────────────────────────── */
+
+.page-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   APP BADGE (HEADER)
+   ───────────────────────────────────────────────────────────── */
+
+.app-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.app-icon {
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
+}
+
+.app-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.app-name span {
+  color: var(--primary-light);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CARD & CONTENT
+   ───────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 36px 32px;
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  backdrop-filter: blur(20px);
+  text-align: center;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FORM FIELDS
+   ───────────────────────────────────────────────────────────── */
+
+.field {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.field label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.field select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px;
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  transition: 0.25s;
+  cursor: pointer;
+}
+
+.field select:focus {
+  border-color: var(--primary-light);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Light mode adjustments */
+[data-theme="light"] .field select {
+  background: rgba(79, 70, 229, 0.04);
+  border-color: rgba(79, 70, 229, 0.1);
+}
+
+[data-theme="light"] .field select:focus {
+  background: rgba(79, 70, 229, 0.08);
+  border-color: var(--primary-light);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BUTTONS
+   ───────────────────────────────────────────────────────────── */
+
+.btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: 0.3s;
+  font-size: 15px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), #6d28d9);
+  color: white;
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(79, 70, 229, 0.5);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   QR CODE DISPLAY
+   ───────────────────────────────────────────────────────────── */
+
+.qr-frame {
+  border-radius: 18px;
+  background: white;
+  padding: 15px;
+  position: relative;
+  margin: 20px auto;
+  border: 2px solid var(--primary-light);
+  width: 210px;
+  height: 210px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(79, 70, 229, 0.2);
+}
+
+#qrcode {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#qrcode img {
+  max-width: 100%;
+  height: auto;
+}
+
+.qr-placeholder {
+  color: #999;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   COUNTDOWN & PROGRESS
+   ───────────────────────────────────────────────────────────── */
+
+#countdown {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--primary-light);
+  margin: 10px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.progress {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+[data-theme="light"] .progress {
+  background: rgba(79, 70, 229, 0.1);
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  width: 0%;
+  transition: width 1s linear;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   STATUS MESSAGES
+   ───────────────────────────────────────────────────────────── */
+
+.status-msg {
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.status-msg.show {
+  display: block;
+}
+
+.status-msg.info {
+  background: rgba(6, 182, 212, 0.1);
+  color: #67e8f9;
+  border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+[data-theme="light"] .status-msg.info {
+  background: rgba(6, 182, 212, 0.08);
+  color: #0891b2;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.status-msg.active {
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+[data-theme="light"] .status-msg.active {
+  background: rgba(16, 185, 129, 0.08);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-msg.expired {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+[data-theme="light"] .status-msg.expired {
+  background: rgba(239, 68, 68, 0.08);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SPINNER ANIMATION
+   ───────────────────────────────────────────────────────────── */
+
+.spinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--primary);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+[data-theme="light"] .spinner {
+  border: 3px solid rgba(79, 70, 229, 0.2);
+  border-left-color: var(--primary);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE DESIGN
+   ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .card {
+    padding: 28px 20px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .app-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .qr-frame {
+    width: 180px;
+    height: 180px;
+  }
+
+  #countdown {
+    font-size: 36px;
+  }
+}
