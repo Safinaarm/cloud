@@ -45,8 +45,8 @@ function updateMap(lat, lng) {
 
   if (!polyline) {
     polyline = L.polyline([], {
-      color: "#22d3ee",
-      weight: 6,
+      color: "#818cf8",
+      weight: 5,
       opacity: 0.85,
       lineCap: 'round',
       lineJoin: 'round'
@@ -78,10 +78,10 @@ function sendGPS(lat, lng, accuracy) {
   const img = new Image();
   img.src = `${API_URL}?${params.toString()}`;
 
-  document.getElementById("status").textContent = 
+  document.getElementById("status").textContent =
     `📍 ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-  
-  document.getElementById("last-update").textContent = 
+
+  document.getElementById("last-update").textContent =
     `Terakhir update: ${new Date().toLocaleTimeString('id-ID')}`;
 }
 
@@ -95,7 +95,7 @@ function startTracking() {
   }
 
   document.getElementById("start").style.display = "none";
-  document.getElementById("stop").style.display = "inline-block";
+  document.getElementById("stop").style.display = "inline-flex";
   document.getElementById("status").textContent = "🔄 Mencari sinyal GPS...";
 
   watchId = navigator.geolocation.watchPosition(
@@ -124,7 +124,7 @@ function stopTracking() {
     watchId = null;
   }
 
-  document.getElementById("start").style.display = "inline-block";
+  document.getElementById("start").style.display = "inline-flex";
   document.getElementById("stop").style.display = "none";
   document.getElementById("status").textContent = "Tracking telah dihentikan";
   document.getElementById("last-update").textContent = "";
