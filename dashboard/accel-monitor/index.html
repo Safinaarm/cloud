@@ -3,285 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Accel Monitoring Wide • CloudProyek</title>
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Accel Monitoring • CloudProyek</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <style>
-    :root {
-      --primary: #4f46e5;
-      --primary-light: #818cf8;
-      --accent: #0ea5e9;
-      --bg: #0f172a;
-      --card-bg: rgba(30, 41, 59, 0.7);
-      --card-border: rgba(255, 255, 255, 0.1);
-      --text: #f8fafc;
-      --text-dim: #94a3b8;
-      --success: #10b981;
-      --error: #ef4444;
-      --warning: #f59e0b;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    /* Container diperlebar agar panjang menyamping */
-    .container { 
-      max-width: 1400px; 
-      margin: 0 auto; 
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--card-border);
-    }
-
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .brand-icon {
-      width: 45px; height: 45px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
-    }
-    .brand-text h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
-
-    .glass-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 30px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    }
-
-    .control-row { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; }
-    .input-wrapper { flex: 1; min-width: 250px; position: relative; }
-    input {
-      width: 100%; background: rgba(255,255,255,0.05); border: 1.5px solid var(--card-border);
-      border-radius: 12px; padding: 12px 15px 12px 40px; color: white; outline: none;
-    }
-    .input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-dim); }
-
-    .btn { padding: 12px 24px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-outline { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); color: white; }
-
-    /* Grid layout diperbarui untuk ruang grafik yang lebih luas */
-    .display-grid { 
-      display: grid; 
-      grid-template-columns: 3fr 1fr; 
-      gap: 24px; 
-    }
-    
-    /* Tinggi grafik ditingkatkan */
-    .chart-container { 
-      height: 450px; 
-      position: relative;
-    }
-
-    .realtime-stats { display: flex; flex-direction: column; gap: 15px; }
-    .stat-card {
-      background: rgba(255,255,255,0.03);
-      border-radius: 16px;
-      padding: 20px;
-      border: 1px solid var(--card-border);
-      text-align: center;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .stat-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-    .stat-value { font-size: 28px; font-weight: 800; }
-    
-    #cloud-status-val { font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; }
-    .update-note { font-size: 10px; color: var(--text-dim); margin-top: 10px; line-height: 1.4; font-style: italic; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; }
-
-    @media (max-width: 1000px) { 
-      .display-grid { grid-template-columns: 1fr; } 
-      .chart-container { height: 350px; }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <div class="container">
+
+  <!-- Header -->
   <header>
     <div class="brand">
-      <div class="brand-icon"><i class="fas fa-satellite-dish"></i></div>
+      <div class="app-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
       <div class="brand-text">
         <h1>CloudProyek</h1>
-        <p>Live Wide-Screen Telemetry</p>
+        <p>Live Accel Telemetry</p>
       </div>
     </div>
-    <div id="last-seen" style="font-size: 12px; color: var(--text-dim);">Last seen: —</div>
+    <div id="last-seen" class="last-seen">Last seen: —</div>
   </header>
 
+  <!-- Main Card -->
   <div class="glass-card">
+
+    <!-- Control Row -->
     <div class="control-row">
       <div class="input-wrapper">
-        <i class="fas fa-microchip"></i>
-        <input type="text" id="deviceIdInput" value="dev-001">
+        <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="2" x2="9" y2="4"/><line x1="15" y1="2" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="22"/><line x1="15" y1="20" x2="15" y2="22"/><line x1="2" y1="9" x2="4" y2="9"/><line x1="2" y1="15" x2="4" y2="15"/><line x1="20" y1="9" x2="22" y2="9"/><line x1="20" y1="15" x2="22" y2="15"/></svg>
+        <input type="text" id="deviceIdInput" value="dev-001" placeholder="Device ID">
       </div>
-      <button class="btn btn-primary" onclick="updateDeviceId()"><i class="fas fa-sync"></i> Hubungkan</button>
-      <button id="btnPause" class="btn btn-outline" onclick="togglePause()"><i class="fas fa-pause"></i> <span>Pause</span></button>
+      <button class="btn btn-primary" onclick="updateDeviceId()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Hubungkan
+      </button>
+      <button id="btnPause" class="btn btn-outline" onclick="togglePause()">
+        <svg id="pauseIcon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        <span id="pauseLabel">Pause</span>
+      </button>
     </div>
 
+    <!-- Chart + Stats -->
     <div class="display-grid">
       <div class="chart-section">
-        <div class="chart-container"><canvas id="accelChart"></canvas></div>
+        <div class="chart-container">
+          <canvas id="accelChart"></canvas>
+        </div>
       </div>
 
       <div class="realtime-stats">
+
         <div class="stat-card">
           <div class="stat-label">Total Magnitude</div>
-          <div id="magVal" class="stat-value" style="color: var(--accent);">0.00 <span style="font-size: 14px; font-weight: 400; color: var(--text-dim);">g</span></div>
+          <div id="magVal" class="stat-value accent">0.00 <span class="unit">g</span></div>
         </div>
 
-        <div class="stat-card" id="cloud-card" style="border-left: 4px solid var(--text-dim);">
+        <div class="stat-card" id="cloud-card">
           <div class="stat-label">Status Cloud</div>
-          <div id="cloud-status-val" style="color: var(--text-dim);">
-            <i class="fas fa-spinner fa-spin"></i> Menghubungkan...
+          <div id="cloud-status-val" class="cloud-status muted">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spin"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+            Menghubungkan...
           </div>
-          <div class="update-note">
-            Update setiap ~10 detik | Ambil latest dari sheet
-          </div>
+          <div class="update-note">Update setiap ~10 detik · Ambil latest dari sheet</div>
         </div>
 
         <div class="stat-card">
           <div class="stat-label">Sumbu Dominan</div>
-          <div id="dominantAxis" class="stat-value" style="font-size: 20px; color: var(--primary-light);">—</div>
+          <div id="dominantAxis" class="stat-value primary" style="font-size: 20px;">—</div>
         </div>
-        
-        <div class="stat-card" style="padding: 15px; background: rgba(79, 70, 229, 0.05);">
+
+        <div class="stat-card accent-card">
           <div class="stat-label">Mode Tampilan</div>
-          <div style="font-size: 12px; color: var(--primary-light); font-weight: 600;">WIDE CONTAINER ACTIVE</div>
+          <div class="mode-label">WIDE CONTAINER ACTIVE</div>
         </div>
+
       </div>
     </div>
   </div>
 </div>
 
-<script>
-  // GANTI DENGAN URL WEB APP KAMU
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBQYgP4rFGw8oj1-L2zg3PjbLtkWGEhUJY-cbuqX_IccRYeXZv7Lc0DoFRqaR3pQlp/exec";
-  
-  let currentDeviceId = 'dev-001';
-  let pollInterval = null;
-  let isPaused = false;
-
-  // MAX_POINTS ditingkatkan agar grafik terlihat lebih panjang menyamping (60 titik)
-  const MAX_POINTS = 60; 
-  const labels = [];
-  const dataX = [], dataY = [], dataZ = [];
-
-  const ctx = document.getElementById('accelChart').getContext('2d');
-  const chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [
-        { label: 'X Axis', data: dataX, borderColor: '#f87171', borderWidth: 2.5, tension: 0.4, pointRadius: 0, fill: true, backgroundColor: 'rgba(248, 113, 113, 0.03)' },
-        { label: 'Y Axis', data: dataY, borderColor: '#4ade80', borderWidth: 2.5, tension: 0.4, pointRadius: 0, fill: true, backgroundColor: 'rgba(74, 222, 128, 0.03)' },
-        { label: 'Z Axis', data: dataZ, borderColor: '#60a5fa', borderWidth: 2.5, tension: 0.4, pointRadius: 0, fill: true, backgroundColor: 'rgba(96, 165, 250, 0.03)' }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: false,
-      scales: {
-        y: { min: -15, max: 15, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 12 } } },
-        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
-      },
-      plugins: { 
-        legend: { position: 'top', labels: { color: '#f1f5f9', font: { weight: '600' }, boxWidth: 15 } } 
-      }
-    }
-  });
-
-  async function fetchData() {
-    if (isPaused) return;
-
-    const targetUrl = `${SCRIPT_URL}?path=telemetry/accel/latest&device_id=${encodeURIComponent(currentDeviceId)}`;
-
-    try {
-      const response = await fetch(targetUrl);
-      const result = await response.json();
-
-      const cloudCard = document.getElementById('cloud-card');
-      const cloudStatus = document.getElementById('cloud-status-val');
-
-      if (result.ok && result.data) {
-        const { x, y, z } = result.data;
-        const ts = new Date().toLocaleTimeString('id-ID', { hour12: false });
-
-        // Update Chart
-        if (labels.length > MAX_POINTS) {
-          labels.shift(); dataX.shift(); dataY.shift(); dataZ.shift();
-        }
-        labels.push(ts);
-        dataX.push(x); dataY.push(y); dataZ.push(z);
-        chart.update();
-
-        // Update Stats
-        const mag = Math.sqrt(x*x + y*y + z*z).toFixed(2);
-        document.getElementById('magVal').innerHTML = `${mag} <span style="font-size: 14px; font-weight: 400; color: var(--text-dim);">g</span>`;
-        document.getElementById('last-seen').textContent = `Terakhir diperbarui: ${ts}`;
-        
-        // STATUS CLOUD: DATA MASUK (Hijau)
-        cloudCard.style.borderLeft = "4px solid var(--success)";
-        cloudStatus.style.color = "var(--success)";
-        cloudStatus.innerHTML = '<i class="fas fa-check-circle"></i> Data Telah Masuk';
-
-        const absX = Math.abs(x), absY = Math.abs(y), absZ = Math.abs(z);
-        const dom = absX > absY && absX > absZ ? 'X' : (absY > absZ ? 'Y' : 'Z');
-        document.getElementById('dominantAxis').textContent = `Sumbu ${dom}`;
-      } else {
-        // STATUS CLOUD: BELUM ADA DATA (Merah)
-        cloudCard.style.borderLeft = "4px solid var(--error)";
-        cloudStatus.style.color = "var(--error)";
-        cloudStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Data Belum Masuk';
-      }
-    } catch (err) {
-      document.getElementById('cloud-status-val').innerHTML = '<i class="fas fa-wifi"></i> Connection Error';
-    }
-  }
-
-  function startMonitoring() {
-    if (pollInterval) clearInterval(pollInterval);
-    // Interval 10 detik sesuai instruksi UI
-    pollInterval = setInterval(fetchData, 10000); 
-    fetchData();
-  }
-
-  function updateDeviceId() {
-    currentDeviceId = document.getElementById('deviceIdInput').value.trim();
-    labels.length = 0; dataX.length = 0; dataY.length = 0; dataZ.length = 0;
-    chart.update();
-    startMonitoring();
-  }
-
-  function togglePause() {
-    isPaused = !isPaused;
-    document.getElementById('btnPause').innerHTML = isPaused ? 
-      '<i class="fas fa-play"></i> <span>Resume</span>' : 
-      '<i class="fas fa-pause"></i> <span>Pause</span>';
-  }
-
-  startMonitoring();
-</script>
+<script src="script.js"></script>
 </body>
 </html>

@@ -6,8 +6,8 @@ const SEND_INTERVAL = 1500;
 // Chart Setup
 const ctx = document.getElementById('chart').getContext('2d');
 const labels = [];
-const xData = []; 
-const yData = []; 
+const xData = [];
+const yData = [];
 const zData = [];
 
 const chart = new Chart(ctx, {
@@ -15,9 +15,9 @@ const chart = new Chart(ctx, {
   data: {
     labels,
     datasets: [
-      { label: 'X', data: xData, borderColor: '#f472b6', tension: 0.4, pointRadius: 0, borderWidth: 3 },
-      { label: 'Y', data: yData, borderColor: '#34d399', tension: 0.4, pointRadius: 0, borderWidth: 3 },
-      { label: 'Z', data: zData, borderColor: '#60a5fa', tension: 0.4, pointRadius: 0, borderWidth: 3 }
+      { label: 'X', data: xData, borderColor: '#f472b6', tension: 0.4, pointRadius: 0, borderWidth: 2.5 },
+      { label: 'Y', data: yData, borderColor: '#34d399', tension: 0.4, pointRadius: 0, borderWidth: 2.5 },
+      { label: 'Z', data: zData, borderColor: '#818cf8', tension: 0.4, pointRadius: 0, borderWidth: 2.5 }
     ]
   },
   options: {
@@ -25,22 +25,23 @@ const chart = new Chart(ctx, {
     maintainAspectRatio: false,
     animation: { duration: 0 },
     scales: {
-      y: { 
-        min: -15, 
-        max: 15, 
-        ticks: { color: '#94a3b8' }, 
-        grid: { color: 'rgba(148,163,184,0.15)' } 
+      y: {
+        min: -15,
+        max: 15,
+        ticks: { color: '#a09fc0', font: { family: "'Plus Jakarta Sans', sans-serif", size: 12 } },
+        grid: { color: 'rgba(255,255,255,0.05)' }
       },
       x: { display: false }
     },
-    plugins: { 
-      legend: { 
-        labels: { 
-          color: '#cbd5e1', 
-          font: { size: 14 },
-          usePointStyle: true
-        } 
-      } 
+    plugins: {
+      legend: {
+        labels: {
+          color: '#f0eff7',
+          font: { size: 13, weight: '600', family: "'Plus Jakarta Sans', sans-serif" },
+          usePointStyle: true,
+          padding: 16
+        }
+      }
     }
   }
 });
@@ -51,8 +52,8 @@ function pushToChart(x, y, z) {
     labels.shift(); xData.shift(); yData.shift(); zData.shift();
   }
   labels.push(time);
-  xData.push(x); 
-  yData.push(y); 
+  xData.push(x);
+  yData.push(y);
   zData.push(z);
   chart.update('none');
 }
@@ -85,8 +86,8 @@ async function start() {
 
     if (!window.DeviceMotionEvent) throw new Error("Browser tidak mendukung accelerometer");
 
-    document.getElementById('status').innerHTML = `<span class="dot"></span> Sensor aktif • Menunggu gerakan...`;
     document.getElementById('status').className = "status online";
+    document.getElementById('status-text').textContent = "Sensor aktif · Menunggu gerakan...";
 
     motionListener = (event) => {
       const acc = event.accelerationIncludingGravity;
@@ -99,7 +100,6 @@ async function start() {
 
     window.addEventListener('devicemotion', motionListener, { passive: true });
 
-    // Kirim data ke cloud
     let lastSent = 0;
     sendIntervalId = setInterval(() => {
       if (Date.now() - lastSent >= SEND_INTERVAL) {
@@ -113,8 +113,8 @@ async function start() {
     document.getElementById('btnStop').disabled = false;
 
   } catch (err) {
-    document.getElementById('status').textContent = "Error: " + err.message;
     document.getElementById('status').className = "status offline";
+    document.getElementById('status-text').textContent = "Error: " + err.message;
   }
 }
 
@@ -125,8 +125,8 @@ function stop() {
   isRunning = false;
   document.getElementById('btnStart').disabled = false;
   document.getElementById('btnStop').disabled = true;
-  document.getElementById('status').innerHTML = `<span class="dot"></span> Dihentikan`;
   document.getElementById('status').className = "status offline";
+  document.getElementById('status-text').textContent = "Dihentikan";
 }
 
 async function sendData(x, y, z) {
