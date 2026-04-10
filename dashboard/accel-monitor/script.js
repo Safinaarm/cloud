@@ -15,6 +15,13 @@ const labels = [];
 const dataX = [], dataY = [], dataZ = [];
 
 const ctx = document.getElementById('accelChart').getContext('2d');
+
+// Determine current theme for chart colors
+const isDarkMode = html.getAttribute('data-theme') === 'dark';
+const chartTextColor = isDarkMode ? '#a09fc0' : '#6b6a8a';
+const chartLegendColor = isDarkMode ? '#f0eff7' : '#1e1b3a';
+const chartGridColor = isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+
 const chart = new Chart(ctx, {
   type: 'line',
   data: {
@@ -32,19 +39,19 @@ const chart = new Chart(ctx, {
     scales: {
       y: {
         min: -15, max: 15,
-        grid: { color: 'rgba(255,255,255,0.05)' },
-        ticks: { color: '#a09fc0', font: { size: 12, family: "'Plus Jakarta Sans', sans-serif" } }
+        grid: { color: chartGridColor },
+        ticks: { color: chartTextColor, font: { size: 12, family: "'Plus Jakarta Sans', sans-serif" } }
       },
       x: {
         grid: { display: false },
-        ticks: { color: '#a09fc0', font: { size: 10, family: "'Plus Jakarta Sans', sans-serif" } }
+        ticks: { color: chartTextColor, font: { size: 10, family: "'Plus Jakarta Sans', sans-serif" } }
       }
     },
     plugins: {
       legend: {
         position: 'top',
         labels: {
-          color: '#f0eff7',
+          color: chartLegendColor,
           font: { weight: '600', family: "'Plus Jakarta Sans', sans-serif" },
           boxWidth: 14,
           padding: 16

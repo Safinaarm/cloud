@@ -233,7 +233,7 @@ body::after {
 .field input {
   width: 100%;
   background: rgba(255,255,255,0.05);
-  border: 1.5px solid rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.15);
   border-radius: 12px;
   padding: 14px 16px;
   color: var(--text);
@@ -245,13 +245,30 @@ body::after {
 }
 
 .field input::placeholder {
-  color: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.25);
 }
 
 .field input:focus {
   border-color: var(--primary-light);
   background: rgba(79,70,229,0.08);
   box-shadow: 0 0 0 4px rgba(79,70,229,0.15);
+}
+
+/* Light mode input styling */
+[data-theme="light"] .field input {
+  background: #ffffff;
+  border: 1.5px solid rgba(79,70,229,0.25);
+  color: var(--text);
+}
+
+[data-theme="light"] .field input::placeholder {
+  color: rgba(79,70,229,0.35);
+}
+
+[data-theme="light"] .field input:focus {
+  border-color: var(--primary);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(79,70,229,0.1);
 }
 
 /* ── Buttons ── */

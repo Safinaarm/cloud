@@ -167,8 +167,8 @@ body::before {
 
 .field select {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   padding: 14px;
   color: var(--text);
@@ -176,22 +176,35 @@ body::before {
   outline: none;
   transition: 0.25s;
   cursor: pointer;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 .field select:focus {
   border-color: var(--primary-light);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.field select option {
+  background: var(--card-bg);
+  color: var(--text);
 }
 
 /* Light mode adjustments */
 [data-theme="light"] .field select {
-  background: rgba(79, 70, 229, 0.04);
-  border-color: rgba(79, 70, 229, 0.1);
+  background: #ffffff;
+  border-color: rgba(79, 70, 229, 0.2);
+  color: var(--text);
 }
 
 [data-theme="light"] .field select:focus {
-  background: rgba(79, 70, 229, 0.08);
-  border-color: var(--primary-light);
+  background: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+[data-theme="light"] .field select option {
+  background: #ffffff;
+  color: var(--text);
 }
 
 /* ─────────────────────────────────────────────────────────────
