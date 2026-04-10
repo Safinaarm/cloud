@@ -1,3 +1,8 @@
+// ==================== THEME INITIALIZATION ====================
+const html = document.documentElement;
+const saved = localStorage.getItem('cp-theme') || 'dark';
+html.setAttribute('data-theme', saved);
+
 // app.js — GPS Monitoring Real-time
 const API_URL = "https://script.google.com/macros/s/AKfycbyCFr-2Vygs0AQgv3HAGgu8wU5a-7HnnQpshcloPUlSWZsoQWnwYBesmXO1te76LPUSxA/exec";
 

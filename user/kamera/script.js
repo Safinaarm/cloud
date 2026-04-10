@@ -1,3 +1,8 @@
+// ==================== THEME INITIALIZATION ====================
+const html = document.documentElement;
+const saved = localStorage.getItem('cp-theme') || 'dark';
+html.setAttribute('data-theme', saved);
+
 // script.js
 const BASE_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyAJ1kCkBIyez7odSwdWMJ86Nm_uTWYfOb2zpTjbDQ-TB5E4qsfUw_4wVyUBkF1F8ih/exec";
 // GANTI DENGAN URL BARU SETELAH DEPLOY ULANG

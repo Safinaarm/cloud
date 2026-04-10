@@ -1,153 +1,118 @@
-// CONFIG
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBQYgP4rFGw8oj1-L2zg3PjbLtkWGEhUJY-cbuqX_IccRYeXZv7Lc0DoFRqaR3pQlp/exec";
-const DEVICE_ID = "dev-001";
-const SEND_INTERVAL = 1500;
+// ==================== THEME INITIALIZATION ====================
+const html = document.documentElement;
+const saved = localStorage.getItem('cp-theme') || 'dark';
+html.setAttribute('data-theme', saved);
 
-// Chart Setup
-const ctx = document.getElementById('chart').getContext('2d');
-const labels = [];
-const xData = [];
-const yData = [];
-const zData = [];
+// app.js — GPS Monitoring Real-time
+const API_URL = "https://script.google.com/macros/s/AKfycbyCFr-2Vygs0AQgv3HAGgu8wU5a-7HnnQpshcloPUlSWZsoQWnwYBesmXO1te76LPUSxA/exec";
 
-const chart = new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels,
-    datasets: [
-      { label: 'X', data: xData, borderColor: '#f472b6', tension: 0.4, pointRadius: 0, borderWidth: 2.5 },
-      { label: 'Y', data: yData, borderColor: '#34d399', tension: 0.4, pointRadius: 0, borderWidth: 2.5 },
-      { label: 'Z', data: zData, borderColor: '#818cf8', tension: 0.4, pointRadius: 0, borderWidth: 2.5 }
-    ]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: { duration: 0 },
-    scales: {
-      y: {
-        min: -15,
-        max: 15,
-        ticks: { color: '#a09fc0', font: { family: "'Plus Jakarta Sans', sans-serif", size: 12 } },
-        grid: { color: 'rgba(255,255,255,0.05)' }
-      },
-      x: { display: false }
-    },
-    plugins: {
-      legend: {
-        labels: {
-          color: '#f0eff7',
-          font: { size: 13, weight: '600', family: "'Plus Jakarta Sans', sans-serif" },
-          usePointStyle: true,
-          padding: 16
-        }
-      }
-    }
-  }
-});
+let map;
+let markers = {};
+let isFirstLoad = true;
 
-function pushToChart(x, y, z) {
-  const time = new Date().toLocaleTimeString([], { minute: '2-digit', second: '2-digit' });
-  if (labels.length > 60) {
-    labels.shift(); xData.shift(); yData.shift(); zData.shift();
-  }
-  labels.push(time);
-  xData.push(x);
-  yData.push(y);
-  zData.push(z);
-  chart.update('none');
+function initMap() {
+  map = L.map('map').setView([-7.2575, 112.7521], 12);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
 }
 
-function formatAxis(v) {
-  return Number(v).toFixed(3);
-}
+function formatDateTime(ts) {
+  if (!ts) return "-";
+  const date = new Date(ts);
 
-function updateReadout(x, y, z) {
-  document.getElementById('xVal').textContent = formatAxis(x);
-  document.getElementById('yVal').textContent = formatAxis(y);
-  document.getElementById('zVal').textContent = formatAxis(z);
-
-  const mag = Math.sqrt(x*x + y*y + z*z).toFixed(2);
-  document.getElementById('mag').innerHTML = `Magnitude: <strong>${mag}</strong> <span class="unit">g</span>`;
-}
-
-// ==================== SENSOR & SEND LOGIC ====================
-let sendIntervalId = null;
-let isRunning = false;
-let latestAccel = { x: 0, y: 0, z: 9.81 };
-let motionListener = null;
-
-async function start() {
-  try {
-    if (typeof DeviceMotionEvent.requestPermission === 'function') {
-      const permission = await DeviceMotionEvent.requestPermission();
-      if (permission !== 'granted') throw new Error("Izin sensor ditolak");
-    }
-
-    if (!window.DeviceMotionEvent) throw new Error("Browser tidak mendukung accelerometer");
-
-    document.getElementById('status').className = "status online";
-    document.getElementById('status-text').textContent = "Sensor aktif · Menunggu gerakan...";
-
-    motionListener = (event) => {
-      const acc = event.accelerationIncludingGravity;
-      if (acc && typeof acc.x === 'number') {
-        latestAccel = { x: acc.x, y: acc.y, z: acc.z };
-      }
-      updateReadout(latestAccel.x, latestAccel.y, latestAccel.z);
-      pushToChart(latestAccel.x, latestAccel.y, latestAccel.z);
-    };
-
-    window.addEventListener('devicemotion', motionListener, { passive: true });
-
-    let lastSent = 0;
-    sendIntervalId = setInterval(() => {
-      if (Date.now() - lastSent >= SEND_INTERVAL) {
-        sendData(latestAccel.x, latestAccel.y, latestAccel.z);
-        lastSent = Date.now();
-      }
-    }, 200);
-
-    isRunning = true;
-    document.getElementById('btnStart').disabled = true;
-    document.getElementById('btnStop').disabled = false;
-
-  } catch (err) {
-    document.getElementById('status').className = "status offline";
-    document.getElementById('status-text').textContent = "Error: " + err.message;
-  }
-}
-
-function stop() {
-  if (sendIntervalId) clearInterval(sendIntervalId);
-  if (motionListener) window.removeEventListener('devicemotion', motionListener);
-
-  isRunning = false;
-  document.getElementById('btnStart').disabled = false;
-  document.getElementById('btnStop').disabled = true;
-  document.getElementById('status').className = "status offline";
-  document.getElementById('status-text').textContent = "Dihentikan";
-}
-
-async function sendData(x, y, z) {
-  const payload = {
-    device_id: DEVICE_ID,
-    samples: [{ t: Date.now(), x: Number(x.toFixed(4)), y: Number(y.toFixed(4)), z: Number(z.toFixed(4)) }]
+  const options = {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
   };
 
-  try {
-    await fetch(SCRIPT_URL + "?path=telemetry/accel", {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+  return date.toLocaleDateString('id-ID', options).replace(',', '');
+}
+
+function updateDeviceList(data) {
+  const container = document.getElementById('device-list');
+  container.innerHTML = '';
+  document.getElementById('device-count').textContent = `${data.length} device`;
+
+  data.forEach(d => {
+    const div = document.createElement('div');
+    div.className = 'device-item';
+    div.innerHTML = `
+      <div class="device-id">${d.device_id}</div>
+      <div class="device-info">
+        📍 ${d.lat.toFixed(5)}, ${d.lng.toFixed(5)}<br>
+        <span class="device-time">🕒 ${formatDateTime(d.ts)}</span>
+      </div>
+    `;
+
+    div.addEventListener('click', () => {
+      if (markers[d.device_id]) {
+        map.flyTo([d.lat, d.lng], 17, { duration: 1.5 });
+        markers[d.device_id].openPopup();
+      }
     });
+
+    container.appendChild(div);
+  });
+}
+
+async function loadData() {
+  try {
+    const res = await fetch(API_URL + "?action=latest_all");
+    const json = await res.json();
+
+    if (!json.ok || !json.data || json.data.length === 0) return;
+
+    const data = json.data;
+
+    updateDeviceList(data);
+
+    data.forEach(d => {
+      const latlng = [Number(d.lat), Number(d.lng)];
+
+      if (markers[d.device_id]) {
+        markers[d.device_id].setLatLng(latlng);
+        markers[d.device_id].getPopup().setContent(buildPopup(d));
+      } else {
+        const marker = L.marker(latlng).addTo(map)
+          .bindPopup(buildPopup(d));
+
+        markers[d.device_id] = marker;
+      }
+    });
+
+    if (isFirstLoad && data.length > 0) {
+      const first = data[0];
+      map.flyTo([first.lat, first.lng], 15);
+      isFirstLoad = false;
+    }
+
+    document.getElementById('last-update').textContent =
+      `Terakhir update: ${new Date().toLocaleTimeString('id-ID')}`;
+
   } catch (e) {
-    console.error("Gagal mengirim data:", e);
+    console.error("Gagal mengambil data:", e);
   }
 }
 
-// Event Listeners
-document.getElementById('btnStart').onclick = start;
-document.getElementById('btnStop').onclick = stop;
-window.addEventListener('beforeunload', stop);
+function buildPopup(d) {
+  return `
+    <b>Device:</b> ${d.device_id}<br>
+    <b>Latitude:</b> ${d.lat.toFixed(6)}<br>
+    <b>Longitude:</b> ${d.lng.toFixed(6)}<br>
+    <b>Akurasi:</b> ${d.accuracy_m || 0} meter<br>
+    <b>Update:</b> ${formatDateTime(d.ts)}
+  `;
+}
+
+// Init
+initMap();
+loadData();
+setInterval(loadData, 3000);

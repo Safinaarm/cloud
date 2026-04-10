@@ -1,4 +1,11 @@
 // ======================================
+// THEME INITIALIZATION
+// ======================================
+const html = document.documentElement;
+const saved = localStorage.getItem('cp-theme') || 'dark';
+html.setAttribute('data-theme', saved);
+
+// ======================================
 // DEVICE ID
 // ======================================
 let DEVICE_ID = localStorage.getItem("device_id");

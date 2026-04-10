@@ -1,3 +1,8 @@
+// ==================== THEME INITIALIZATION ====================
+const html = document.documentElement;
+const saved = localStorage.getItem('cp-theme') || 'dark';
+html.setAttribute('data-theme', saved);
+
 // accel.js — Accel Monitoring (logic unchanged)
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBQYgP4rFGw8oj1-L2zg3PjbLtkWGEhUJY-cbuqX_IccRYeXZv7Lc0DoFRqaR3pQlp/exec";
 
