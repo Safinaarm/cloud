@@ -1,181 +1,161 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CloudProyek - Control Center</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-        }
-      }
-    }
-  </script>
-  <style>
-    body {
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    }
-    .dark body {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    }
-
-    .glass {
-      background: rgba(255, 255, 255, 0.82);
-      backdrop-filter: blur(28px);
-      border: 1px solid rgba(255,255,255,0.35);
-      box-shadow: 0 20px 50px -15px rgb(0 0 0 / 0.12);
-    }
-    .dark .glass {
-      background: rgba(30, 41, 59, 0.85);
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: 0 20px 50px -15px rgb(0 0 0 / 0.45);
-    }
-
-    .dashboard-card {
-      transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
-    }
-    .dashboard-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 30px 60px -15px rgb(79 70 229 / 0.25);
-    }
-    .dark .dashboard-card:hover {
-      box-shadow: 0 30px 60px -15px rgb(14 165 233 / 0.3);
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="min-h-screen text-gray-900 dark:text-gray-100 antialiased">
+<body>
+
+  <div class="bg-gradient"></div>
+  <div class="bg-grid"></div>
 
   <!-- Header -->
-  <header class="sticky top-0 z-50 glass border-b border-gray-200/70 dark:border-gray-700/50">
-    <div class="max-w-7xl mx-auto px-8 py-5 flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-white font-bold text-3xl shadow-xl">CP</div>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">CP</div>
         <div>
-          <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">CloudProyek</h1>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Control Center</p>
+          <h1>CloudProyek</h1>
+          <p>Control Center</p>
         </div>
       </div>
-
-      <div class="flex items-center gap-6">
-        <div class="flex items-center gap-2 px-5 py-2.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl text-sm font-medium text-emerald-700 dark:text-emerald-400">
-          <div class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>
+      <div class="header-right">
+        <div class="online-badge">
+          <span class="dot"></span>
           Semua Sistem Online
         </div>
-        <button id="theme-toggle" class="p-3.5 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-          <i class="fas fa-moon text-2xl text-gray-700 dark:text-gray-300"></i>
+        <button id="theme-toggle" class="theme-btn" aria-label="Toggle theme">
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-8 py-16">
-    
-    <!-- Hero Section + Penjelasan -->
-    <div class="mb-16 text-center">
-      <div class="inline-flex items-center gap-2 px-6 py-2 bg-white dark:bg-slate-800 rounded-full border border-gray-200 dark:border-gray-700 mb-6">
-        <span class="text-emerald-500">●</span>
-        <span class="text-sm font-medium">Platform Monitoring & Tracking Real-time</span>
+  <main>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-pill">
+        <span class="pill-dot"></span>
+        Platform Monitoring &amp; Tracking Real-time
       </div>
-      
-      <h1 class="text-6xl md:text-7xl font-bold tracking-tighter mb-6 bg-gradient-to-r from-indigo-700 via-purple-600 to-sky-600 bg-clip-text text-transparent">
-        Control Center
-      </h1>
-      <p class="max-w-3xl mx-auto text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
-        Selamat datang di pusat kendali CloudProyek. Kelola pengiriman data dari perangkat IoT, 
+      <h2 class="hero-title">Control Center</h2>
+      <p class="hero-desc">
+        Selamat datang di pusat kendali CloudProyek. Kelola pengiriman data dari perangkat IoT,
         pantau lokasi GPS secara real-time, dan akses semua log sensor dengan antarmuka profesional yang aman dan cepat.
       </p>
     </div>
 
     <!-- Quick Stats -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-      <div class="glass rounded-3xl p-6 text-center">
-        <p class="text-sm text-gray-500 dark:text-gray-400">Perangkat Aktif</p>
-        <p class="text-4xl font-semibold mt-2 text-indigo-600 dark:text-indigo-400">12</p>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Perangkat Aktif</div>
+        <div class="stat-value indigo">12</div>
       </div>
-      <div class="glass rounded-3xl p-6 text-center">
-        <p class="text-sm text-gray-500 dark:text-gray-400">Data Hari Ini</p>
-        <p class="text-4xl font-semibold mt-2 text-sky-600 dark:text-sky-400">248</p>
+      <div class="stat-card">
+        <div class="stat-label">Data Hari Ini</div>
+        <div class="stat-value accent">248</div>
       </div>
-      <div class="glass rounded-3xl p-6 text-center">
-        <p class="text-sm text-gray-500 dark:text-gray-400">Last Sync</p>
-        <p class="text-4xl font-semibold mt-2 text-emerald-600">Baru saja</p>
+      <div class="stat-card">
+        <div class="stat-label">Last Sync</div>
+        <div class="stat-value success" style="font-size:20px">Baru saja</div>
       </div>
-      <div class="glass rounded-3xl p-6 text-center">
-        <p class="text-sm text-gray-500 dark:text-gray-400">Uptime</p>
-        <p class="text-4xl font-semibold mt-2 text-violet-600">99.98%</p>
+      <div class="stat-card">
+        <div class="stat-label">Uptime</div>
+        <div class="stat-value violet">99.98%</div>
       </div>
     </div>
 
-    <div class="grid lg:grid-cols-2 gap-10">
+    <!-- Sections -->
+    <div class="sections-grid">
 
-      <!-- AREA PENGGUNA -->
-      <section class="glass rounded-3xl p-10">
-        <div class="flex items-center gap-5 mb-10">
-          <div class="text-5xl">👤</div>
+      <!-- Area Pengguna -->
+      <section class="glass-card">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
           <div>
-            <h2 class="text-3xl font-semibold tracking-tight">Area Pengguna</h2>
-            <p class="text-gray-500 dark:text-gray-400">Kirim data langsung dari perangkat Anda</p>
+            <h2>Area Pengguna</h2>
+            <p>Kirim data langsung dari perangkat Anda</p>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <a href="user/gps/index.html" target="_blank" class="dashboard-card glass rounded-3xl p-8 border border-transparent hover:border-indigo-200 flex flex-col items-center text-center group">
-            <div class="text-7xl mb-6 transition-transform group-hover:scale-110">📍</div>
-            <h3 class="font-semibold text-2xl mb-2">GPS Tracker</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Pelacakan posisi real-time perangkat</p>
+        <div class="menu-grid">
+          <a href="user/gps/index.html" target="_blank" class="menu-card">
+            <div class="menu-icon-wrap color-indigo">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div class="menu-title">GPS Tracker</div>
+            <div class="menu-desc">Pelacakan posisi real-time</div>
+            <div class="menu-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </a>
 
-          <a href="user/accel/index.html" target="_blank" class="dashboard-card glass rounded-3xl p-8 border border-transparent hover:border-indigo-200 flex flex-col items-center text-center group">
-            <div class="text-7xl mb-6 transition-transform group-hover:scale-110">⚡</div>
-            <h3 class="font-semibold text-2xl mb-2">Accelerometer</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Monitoring percepatan & gerakan</p>
+          <a href="user/accel/index.html" target="_blank" class="menu-card">
+            <div class="menu-icon-wrap color-cyan">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="menu-title">Accelerometer</div>
+            <div class="menu-desc">Monitoring percepatan &amp; gerakan</div>
+            <div class="menu-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </a>
 
-          <a href="user/kamera/index.html" target="_blank" class="dashboard-card glass rounded-3xl p-8 border border-transparent hover:border-indigo-200 flex flex-col items-center text-center group">
-            <div class="text-7xl mb-6 transition-transform group-hover:scale-110">📷</div>
-            <h3 class="font-semibold text-2xl mb-2">QR Absensi</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Sistem absensi berbasis QR Code</p>
+          <a href="user/kamera/index.html" target="_blank" class="menu-card">
+            <div class="menu-icon-wrap color-violet">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div class="menu-title">QR Absensi</div>
+            <div class="menu-desc">Sistem absensi QR Code</div>
+            <div class="menu-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </a>
         </div>
       </section>
 
-      <!-- MONITORING DASHBOARD -->
-      <section class="glass rounded-3xl p-10">
-        <div class="flex items-center gap-5 mb-10">
-          <div class="text-5xl">📊</div>
+      <!-- Monitoring Dashboard -->
+      <section class="glass-card">
+        <div class="section-header">
+          <div class="section-icon accent">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
           <div>
-            <h2 class="text-3xl font-semibold tracking-tight">Monitoring Dashboard</h2>
-            <p class="text-gray-500 dark:text-gray-400">Pantau & analisis data dari Apps Script</p>
+            <h2>Monitoring Dashboard</h2>
+            <p>Pantau &amp; analisis data dari Apps Script</p>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <a href="dashboard/generate-qr/index.html" target="_blank" class="dashboard-card glass rounded-3xl p-8 border border-transparent hover:border-sky-200 flex flex-col items-center text-center group">
-            <div class="text-7xl mb-6 transition-transform group-hover:scale-110">🔳</div>
-            <h3 class="font-semibold text-2xl mb-2">QR Absensi</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Log kehadiran terkini</p>
+        <div class="menu-grid">
+          <a href="dashboard/generate-qr/index.html" target="_blank" class="menu-card">
+            <div class="menu-icon-wrap color-green">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="14" width="3" height="3"/><rect x="14" y="18" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>
+            </div>
+            <div class="menu-title">QR Absensi</div>
+            <div class="menu-desc">Log kehadiran terkini</div>
+            <div class="menu-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </a>
 
-          <a href="dashboard/gps-logs/index.html" target="_blank" class="dashboard-card glass rounded-3xl p-8 border border-transparent hover:border-sky-200 flex flex-col items-center text-center group">
-            <div class="text-7xl mb-6 transition-transform group-hover:scale-110">🗺️</div>
-            <h3 class="font-semibold text-2xl mb-2">GPS Logs</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Riwayat lokasi semua perangkat</p>
+          <a href="dashboard/gps-logs/index.html" target="_blank" class="menu-card">
+            <div class="menu-icon-wrap color-amber">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+            </div>
+            <div class="menu-title">GPS Logs</div>
+            <div class="menu-desc">Riwayat lokasi semua perangkat</div>
+            <div class="menu-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </a>
 
-          <a href="dashboard/accel-monitor/index.html" target="_blank" class="dashboard-card glass rounded-3xl p-8 border border-transparent hover:border-sky-200 flex flex-col items-center text-center group">
-            <div class="text-7xl mb-6 transition-transform group-hover:scale-110">📈</div>
-            <h3 class="font-semibold text-2xl mb-2">Accelerometer</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Data sensor real-time</p>
+          <a href="dashboard/accel-monitor/index.html" target="_blank" class="menu-card">
+            <div class="menu-icon-wrap color-rose">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="menu-title">Accelerometer</div>
+            <div class="menu-desc">Data sensor real-time</div>
+            <div class="menu-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </a>
         </div>
       </section>
@@ -183,32 +163,10 @@
     </div>
   </main>
 
-  <footer class="max-w-7xl mx-auto px-8 py-12 text-center text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-800">
-    <p>© 2026 CloudProyek • Control Center Dashboard</p>
+  <footer>
+    <p>© 2026 CloudProyek · Control Center Dashboard</p>
   </footer>
 
-  <script>
-    // Dark Mode Toggle
-    const toggleBtn = document.getElementById('theme-toggle');
-    const html = document.documentElement;
-    const icon = toggleBtn.querySelector('i');
-
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      html.classList.add('dark');
-      icon.classList.replace('fa-moon', 'fa-sun');
-    }
-
-    toggleBtn.addEventListener('click', () => {
-      html.classList.toggle('dark');
-      if (html.classList.contains('dark')) {
-        localStorage.theme = 'dark';
-        icon.classList.replace('fa-moon', 'fa-sun');
-      } else {
-        localStorage.theme = 'light';
-        icon.classList.replace('fa-sun', 'fa-moon');
-      }
-    });
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>
