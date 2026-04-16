@@ -338,6 +338,51 @@ body::after {
   color: var(--text) !important;
 }
 
+/* Style untuk marker kustom */
+.custom-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker-pin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  background: var(--marker-color, #4f46e5);
+  position: absolute;
+  transform: rotate(-45deg);
+  left: 50%;
+  top: 50%;
+  margin: -15px 0 0 -15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.8);
+}
+
+/* Icon di tengah pin */
+.marker-pin::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  transform: rotate(45deg);
+}
+
+/* Efek lingkaran di bawah pin */
+.marker-shadow {
+  width: 14px;
+  height: 4px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 50%;
+  position: absolute;
+  bottom: -2px;
+  left: 8px;
+}
+
 /* ── Responsive ── */
 @media (max-width: 480px) {
   .sidebar {
