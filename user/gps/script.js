@@ -15,7 +15,7 @@ if (!DEVICE_ID) {
   localStorage.setItem("device_id", DEVICE_ID);
 }
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwRJ_WR-1vIkAGA_7UrE9Gfs7Nu7ToyXv-_fx0wQhTT3x8xcFYUvPjJkXNEYCAPumh0CQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxJormXSihwT-iFqMqpvb7kJrrGfB8fq__x9TTAf4QrTnEmuR0sJulHoWaMrlGk-h5P/exec";
 
 let map;
 let marker;

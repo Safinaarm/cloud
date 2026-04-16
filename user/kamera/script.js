@@ -4,7 +4,7 @@ const saved = localStorage.getItem('cp-theme') || 'dark';
 html.setAttribute('data-theme', saved);
 
 // script.js
-const BASE_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyAJ1kCkBIyez7odSwdWMJ86Nm_uTWYfOb2zpTjbDQ-TB5E4qsfUw_4wVyUBkF1F8ih/exec";
+const BASE_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxJormXSihwT-iFqMqpvb7kJrrGfB8fq__x9TTAf4QrTnEmuR0sJulHoWaMrlGk-h5P/exec";
 // GANTI DENGAN URL BARU SETELAH DEPLOY ULANG
 
 let user_id = "";
@@ -77,7 +77,6 @@ document.getElementById("backToHomeBtn").addEventListener("click", () => {
   showPage("page1");
 });
 
-// Fungsi utama scan
 function startScanQR() {
   if (typeof ZXing === "undefined" || !ZXing.BrowserMultiFormatReader) {
     setStatus("scanStatus", "Gagal memuat ZXing. Periksa koneksi.", "error");
@@ -91,11 +90,7 @@ function startScanQR() {
 
   navigator.mediaDevices
     .getUserMedia({
-      video: {
-        facingMode: "environment",
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
-      }
+      video: { facingMode: "environment" }
     })
     .then(stream => {
       currentStream = stream;
@@ -109,58 +104,77 @@ function startScanQR() {
   codeReader.decodeFromVideoDevice(undefined, "video", async (result, err) => {
     if (result) {
       stopCamera();
-      setStatus("scanStatus", "QR terdeteksi, mengirim data...", "info");
+      setStatus("scanStatus", "QR terdeteksi, menganalisis data...", "info");
 
       try {
-        const url = new URL(result.text);
-        const qr_token   = url.searchParams.get("qr_token");
-        const course_id  = url.searchParams.get("course_id");
-        const session_id = url.searchParams.get("session_id");
+        let finalUrl = "";
+        let qrData = {};
+        
+        // --- LOGIKA DINAMIS UNTUK SWAP TESTING ---
+        if (result.text.startsWith("http")) {
+          // A. Jika isi QR adalah URL (Seperti sistem kamu atau temanmu)
+          const urlObj = new URL(result.text);
+          
+          // Cek apakah URL ini mengandung endpoint Apps Script (script.google.com)
+          if (result.text.includes("script.google.com")) {
+             // Jika temanmu menaruh URL script-nya di QR, kita pakai itu sebagai endpoint!
+             finalUrl = result.text.split('?')[0]; 
+          } else {
+             finalUrl = BASE_WEBAPP_URL; // Balik ke default jika bukan GAS URL
+          }
 
-        if (!qr_token || !course_id || !session_id) {
-          throw new Error("Format QR tidak valid");
+          qrData = {
+            qr_token: urlObj.searchParams.get("qr_token") || urlObj.searchParams.get("token"),
+            course_id: urlObj.searchParams.get("course_id") || urlObj.searchParams.get("course"),
+            session_id: urlObj.searchParams.get("session_id") || urlObj.searchParams.get("session")
+          };
+        } else {
+          // B. Jika isi QR adalah JSON (Misal kelompok lain pakai format JSON)
+          try {
+            qrData = JSON.parse(result.text);
+            finalUrl = BASE_WEBAPP_URL; 
+          } catch(e) {
+            throw new Error("Format QR tidak dikenali (Bukan URL/JSON)");
+          }
         }
+
+        // Validasi minimal
+        if (!qrData.qr_token) throw new Error("QR Token tidak ditemukan");
 
         const payload = {
           user_id,
-          device_id: navigator.userAgent || "unknown",
-          course_id,
-          session_id,
-          qr_token,
+          device_id: navigator.userAgent,
+          course_id: qrData.course_id || "unknown",
+          session_id: qrData.session_id || "unknown",
+          qr_token: qrData.qr_token,
           ts: new Date().toISOString()
         };
 
-        const response = await fetch(`${BASE_WEBAPP_URL}?action=checkin`, {
+        // Kirim ke finalUrl (bisa milikmu, bisa milik temanmu tergantung isi QR)
+        const response = await fetch(`${finalUrl}?action=checkin`, {
           method: "POST",
           mode: "cors",
-          redirect: "follow",
-          headers: {
-            "Content-Type": "text/plain;charset=UTF-8"   // ← kunci bypass preflight
-          },
+          headers: { "Content-Type": "text/plain;charset=UTF-8" },
           body: JSON.stringify(payload)
         });
 
         const data = await response.json();
 
         if (data.ok) {
-          document.getElementById("resultName").textContent       = user_id;
-          document.getElementById("resultCourse").textContent     = course_id;
-          document.getElementById("resultSession").textContent    = session_id;
-          document.getElementById("resultPresenceId").textContent = data.data?.presence_id || "—";
+          document.getElementById("resultName").textContent = user_id;
+          document.getElementById("resultCourse").textContent = qrData.course_id || "Sukses";
+          document.getElementById("resultSession").textContent = qrData.session_id || "-";
+          document.getElementById("resultPresenceId").textContent = data.data?.presence_id || "SAVED";
           showPage("page3");
         } else {
-          setStatus("scanStatus", "❌ " + (data.error || "Gagal dari server"), "error");
+          setStatus("scanStatus", "❌ " + (data.error || "Server menolak data"), "error");
           tambahTombolScanUlang();
         }
       } catch (e) {
-        console.error("Error:", e);
-        setStatus("scanStatus", "❌ Failed to fetch - " + (e.message || "cek koneksi & deployment GAS"), "error");
+        console.error("Error Detail:", e);
+        setStatus("scanStatus", "❌ Gagal: " + e.message, "error");
         tambahTombolScanUlang();
       }
-    }
-
-    if (err && err.name !== "NotFoundException") {
-      console.warn("Scan warning:", err);
     }
   });
 }
