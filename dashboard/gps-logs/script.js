@@ -70,32 +70,42 @@ async function loadData() {
 
     if (!json.ok || !json.data || json.data.length === 0) return;
 
-    const data = json.data;
+    const batasDetik = 20; 
+    const sekarang = new Date();
+    
+    const activeData = json.data.filter(d => {
+      const waktuDevice = new Date(d.ts);
+      // Hitung selisih dalam satuan detik
+      const selisihDetik = (sekarang - waktuDevice) / 1000;
+      return selisihDetik <= batasDetik;
+    });
 
-    updateDeviceList(data);
+    // Update list di sidebar
+    updateDeviceList(activeData);
 
-    data.forEach(d => {
+    // Bersihkan marker yang sudah tidak aktif (lebih dari 30 detik)
+    Object.keys(markers).forEach(deviceId => {
+      const isStillActive = activeData.find(d => d.device_id === deviceId);
+      if (!isStillActive) {
+        map.removeLayer(markers[deviceId]);
+        delete markers[deviceId];
+      }
+    });
+
+    // Tampilkan/update marker device yang aktif
+    activeData.forEach(d => {
       const latlng = [Number(d.lat), Number(d.lng)];
-
       if (markers[d.device_id]) {
         markers[d.device_id].setLatLng(latlng);
         markers[d.device_id].getPopup().setContent(buildPopup(d));
       } else {
-        const marker = L.marker(latlng).addTo(map)
-          .bindPopup(buildPopup(d));
-
+        const marker = L.marker(latlng).addTo(map).bindPopup(buildPopup(d));
         markers[d.device_id] = marker;
       }
     });
 
-    if (isFirstLoad && data.length > 0) {
-      const first = data[0];
-      map.flyTo([first.lat, first.lng], 15);
-      isFirstLoad = false;
-    }
-
     document.getElementById('last-update').textContent =
-      `Terakhir update: ${new Date().toLocaleTimeString('id-ID')}`;
+      `Terakhir update: ${sekarang.toLocaleTimeString('id-ID')} (${activeData.length} Aktif)`;
 
   } catch (e) {
     console.error("Gagal mengambil data:", e);
