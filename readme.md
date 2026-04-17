@@ -67,6 +67,16 @@ http://127.0.0.1:5501
 
 ---
 
+## 🔗 Akses Proyek
+
+* 🌍 **Link Website**
+  [https://safinaarm.github.io/cloud/](https://safinaarm.github.io/cloud/)
+
+* 📊 **Dataset Penyimpanan (Google Sheets)**
+  [https://docs.google.com/spreadsheets/d/1AaGpQYGGnhh00GIdYFTZEzczl3g8Xkw9GxE27jHOEbE/edit?gid=1619497093#gid=1619497093](https://docs.google.com/spreadsheets/d/1AaGpQYGGnhh00GIdYFTZEzczl3g8Xkw9GxE27jHOEbE/edit?gid=1619497093#gid=1619497093)
+
+---
+
 ## 🌐 Dokumentasi API (Google Apps Script)
 
 | Fungsi        | Endpoint                                                                                                                                                                                                                                 |
@@ -142,4 +152,4 @@ Contoh request:
 
 ---
 
-© 2026 CloudProyek Kelompok 5 - C3
+© 2026 Kelompok 5 - C3
