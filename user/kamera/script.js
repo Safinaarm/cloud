@@ -5,12 +5,9 @@ html.setAttribute('data-theme', saved);
 
 // script.js
 const DEFAULT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyAJ1kCkBIyez7odSwdWMJ86Nm_uTWYfOb2zpTjbDQ-TB5E4qsfUw_4wVyUBkF1F8ih/exec";
-// GANTI DENGAN URL LAIN JIKA INGIN SWAPTEST
+// GANTI DENGAN URL LZIN
 
 // Kelompok Anda (default):  "?action=checkin"
-// Kelompok lain1 (contoh):  "?path=/presence/checkin"
-// Kelompok lain2 (tanpa slash): "?path=presence/checkin"  
-const API_ROUTE = "?action=checkin&path=presence/checkin";
 
 let user_id = "";
 let codeReader = null;
@@ -165,20 +162,47 @@ function startScanQR() {
         const customUrl = document.getElementById("customGasUrl")?.value.trim();
         const finalBaseUrl = customUrl ? customUrl : DEFAULT_WEBAPP_URL;
 
-        // Menggunakan API_ROUTE yang bisa di-switch di atas
-        const response = await fetch(`${finalBaseUrl}${API_ROUTE}`, {
-          method: "POST",
-          mode: "cors",
-          redirect: "follow",
-          headers: {
-            "Content-Type": "text/plain;charset=UTF-8"   // ← kunci bypass preflight
-          },
-          body: JSON.stringify(payload)
-        });
+        // Daftar tebakan Rute/Endpoint yang mungkin dipakai oleh kelompok lain
+        const possibleRoutes = [
+          "?action=checkin",              // Standar: Kelompok Sendiri
+          "?path=/presence/checkin",      // Standar: Kelompok Cindy dkk
+          "?path=presence/checkin",       // Standar: Kelompok 4
+          "?mode=checkin"                 // Standar Cadangan
+        ];
 
-        const data = await response.json();
+        let response;
+        let data;
 
-        if (data.ok) {
+        // Auto-Routing: Coba tembak satu per satu, pindah rute jika server bilang "Route Not Found"
+        for (const route of possibleRoutes) {
+          response = await fetch(`${finalBaseUrl}${route}`, {
+            method: "POST",
+            mode: "cors",
+            redirect: "follow",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
+            body: JSON.stringify(payload)
+          });
+          
+          data = await response.json();
+
+          // Jika sukses, atau jika errornya BUKAN salah rute (misal: "token_invalid"), stop mencoba rute lain!
+          if (data.ok) break;
+
+          const errStr = (data.error || "unknown").toLowerCase();
+          const p = errStr;
+          // Cek apakah errornya murni karena server tidak mengenali URL path-nya
+          if (p.includes("route") || p.includes("unknown") || p.includes("action") || p.includes("not found") || p.includes("tidak dikenal")) {
+            console.log(`Rute ${route} ditolak server, mencoba rute selanjutnya...`);
+            continue; 
+          } else {
+            // Jika errornya seperti "Token tidak valid", berarti rutenya SUDAH BENAR dan terbaca server
+            break;
+          }
+        }
+
+        if (data && data.ok) {
           document.getElementById("resultName").textContent = user_id;
           document.getElementById("resultCourse").textContent = course_id;
           document.getElementById("resultSession").textContent = session_id;
