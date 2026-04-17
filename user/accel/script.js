@@ -4,7 +4,7 @@ const saved = localStorage.getItem('cp-theme') || 'dark';
 html.setAttribute('data-theme', saved);
 
 // ==================== CONFIG ====================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXQyqvnr1igO1MDW3E1_9t4w_HMb0BSJ54I-ukFHo1QNo8XCl63NncIQ3OLrD7aLdA/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBQYgP4rFGw8oj1-L2zg3PjbLtkWGEhUJY-cbuqX_IccRYeXZv7Lc0DoFRqaR3pQlp/exec";
 const DEVICE_ID = "dev-001";
 const SEND_INTERVAL = 1500;
 
