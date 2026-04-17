@@ -4,14 +4,12 @@ const saved = localStorage.getItem('cp-theme') || 'dark';
 html.setAttribute('data-theme', saved);
 
 // script.js
-const BASE_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyAJ1kCkBIyez7odSwdWMJ86Nm_uTWYfOb2zpTjbDQ-TB5E4qsfUw_4wVyUBkF1F8ih/exec";
-// GANTI DENGAN URL BARU SETELAH DEPLOY ULANG
+const DEFAULT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyAJ1kCkBIyez7odSwdWMJ86Nm_uTWYfOb2zpTjbDQ-TB5E4qsfUw_4wVyUBkF1F8ih/exec";
+// GANTI DENGAN URL LAIN JIKA INGIN SWAPTEST
 
-// Jika Anda melakukan "Swap Test" ke kelompok lain dan menemui error "Route not found", 
-// silakan ubah API_ROUTE ini sesuai dengan rute routing kode GAS kelompok tersebut:
 // Kelompok Anda (default):  "?action=checkin"
 // Kelompok lain1 (contoh):  "?path=/presence/checkin"
-// Kelompok lain2 (tanpa slash): "?path=presence/checkin"  <-- PENTING! (Gunakan ini untuk tes saat ini)
+// Kelompok lain2 (tanpa slash): "?path=presence/checkin"  
 const API_ROUTE = "?action=checkin&path=presence/checkin";
 
 let user_id = "";
@@ -164,8 +162,11 @@ function startScanQR() {
           ts: new Date().toISOString()
         };
 
+        const customUrl = document.getElementById("customGasUrl")?.value.trim();
+        const finalBaseUrl = customUrl ? customUrl : DEFAULT_WEBAPP_URL;
+
         // Menggunakan API_ROUTE yang bisa di-switch di atas
-        const response = await fetch(`${BASE_WEBAPP_URL}${API_ROUTE}`, {
+        const response = await fetch(`${finalBaseUrl}${API_ROUTE}`, {
           method: "POST",
           mode: "cors",
           redirect: "follow",
@@ -214,3 +215,11 @@ function startScanQR() {
     }
   });
 }
+
+// Inisialisasi form default saat halaman dimuat
+document.addEventListener("DOMContentLoaded", () => {
+  const urlInput = document.getElementById("customGasUrl");
+  if (urlInput) {
+    urlInput.value = DEFAULT_WEBAPP_URL;
+  }
+});

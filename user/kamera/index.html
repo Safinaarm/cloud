@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QR Absensi Digital</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 
   <!-- ZXing library - versi stabil -->
   <script src="https://unpkg.com/@zxing/library@0.21.2/umd/index.min.js"></script>
   <script src="https://unpkg.com/@zxing/browser@0.1.5/umd/index.min.js"></script>
 </head>
+
 <body>
 
   <div class="page-container">
@@ -37,6 +40,10 @@
         <div class="field">
           <label><i class="fas fa-user"></i> Nama / NIM</label>
           <input type="text" id="user_id" placeholder="Ketik nama lengkap atau NIM..." autocomplete="off" required>
+        </div>
+        <div class="field">
+          <label><i class="fas fa-link"></i> URL Target GAS (Swap Test)</label>
+          <input type="url" id="customGasUrl" placeholder="Kosongkan untuk server bawaan..." autocomplete="off">
         </div>
 
         <button id="submitNameBtn" class="btn btn-primary">
@@ -136,4 +143,5 @@
 
   <script src="script.js" defer></script>
 </body>
+
 </html>
