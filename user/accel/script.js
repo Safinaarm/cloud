@@ -140,8 +140,12 @@ async function sendData(x, y, z) {
     samples: [{ t: Date.now(), x: Number(x.toFixed(4)), y: Number(y.toFixed(4)), z: Number(z.toFixed(4)) }]
   };
 
+  // DYNAMIC URL: Membaca dari input. Jika kosong, gunakan SCRIPT_URL bawaan.
+  const customUrl = document.getElementById('customScriptUrl').value.trim();
+  const targetUrl = customUrl ? customUrl : SCRIPT_URL;
+
   try {
-    await fetch(SCRIPT_URL + "?path=telemetry/accel", {
+    await fetch(targetUrl + "?path=telemetry/accel", {
       method: "POST",
       mode: "no-cors",
       headers: { "Content-Type": "application/json" },
