@@ -7,6 +7,13 @@ html.setAttribute('data-theme', saved);
 const BASE_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyAJ1kCkBIyez7odSwdWMJ86Nm_uTWYfOb2zpTjbDQ-TB5E4qsfUw_4wVyUBkF1F8ih/exec";
 // GANTI DENGAN URL BARU SETELAH DEPLOY ULANG
 
+// Jika Anda melakukan "Swap Test" ke kelompok lain dan menemui error "Route not found", 
+// silakan ubah API_ROUTE ini sesuai dengan rute routing kode GAS kelompok tersebut:
+// Kelompok Anda (default):  "?action=checkin"
+// Kelompok lain1 (contoh):  "?path=/presence/checkin"
+// Kelompok lain2 (tanpa slash): "?path=presence/checkin"  <-- PENTING! (Gunakan ini untuk tes saat ini)
+const API_ROUTE = "?action=checkin&path=presence/checkin";
+
 let user_id = "";
 let codeReader = null;
 let currentStream = null;
@@ -32,7 +39,7 @@ function hideStatus(elId) {
 
 function stopCamera() {
   if (codeReader) {
-    try { codeReader.reset(); } catch(e) {}
+    try { codeReader.reset(); } catch (e) { }
     codeReader = null;
   }
   if (currentStream) {
@@ -112,13 +119,37 @@ function startScanQR() {
       setStatus("scanStatus", "QR terdeteksi, mengirim data...", "info");
 
       try {
-        const url = new URL(result.text);
-        const qr_token   = url.searchParams.get("qr_token");
-        const course_id  = url.searchParams.get("course_id");
-        const session_id = url.searchParams.get("session_id");
+        let qr_token, course_id, session_id;
 
-        if (!qr_token || !course_id || !session_id) {
-          throw new Error("Format QR tidak valid");
+        try {
+          // 1. Coba parse sebagai URL (Format Kelompok Biasa)
+          const url = new URL(result.text);
+          qr_token = url.searchParams.get("qr_token") || url.searchParams.get("token");
+          course_id = url.searchParams.get("course_id") || url.searchParams.get("course");
+          session_id = url.searchParams.get("session_id") || url.searchParams.get("session");
+        } catch (urlError) {
+          // 2. Jika bukan URL, coba parse sebagai JSON murni (Format Kelompok Baru)
+          try {
+            const parsedObj = JSON.parse(result.text);
+            qr_token = parsedObj.qr_token || parsedObj.token;
+            course_id = parsedObj.course_id || parsedObj.course;
+            session_id = parsedObj.session_id || parsedObj.session;
+          } catch (jsonError) {
+            // 3. Jika bukan JSON, cek apakah ini Raw Token (teks murni)
+            let rawStr = result.text.trim();
+            if (rawStr.startsWith("TKN-") || rawStr.length < 30) {
+              qr_token = rawStr;
+              course_id = "cross-group-test";
+              session_id = "cross-group-test";
+            } else {
+              let safeText = result.text.substring(0, 50);
+              throw new Error(`Format tidak dikenali. Isi QR: "${safeText}"...`);
+            }
+          }
+        }
+
+        if (!qr_token) {
+          throw new Error("Format QR tidak valid (Token Kosong)");
         }
 
         const payload = {
@@ -127,10 +158,14 @@ function startScanQR() {
           course_id,
           session_id,
           qr_token,
+          token: qr_token,  // kompatibilitas dengan kelompok lain
+          course: course_id, // kompatibilitas dengan kelompok lain
+          session: session_id, // kompatibilitas dengan kelompok lain
           ts: new Date().toISOString()
         };
 
-        const response = await fetch(`${BASE_WEBAPP_URL}?action=checkin`, {
+        // Menggunakan API_ROUTE yang bisa di-switch di atas
+        const response = await fetch(`${BASE_WEBAPP_URL}${API_ROUTE}`, {
           method: "POST",
           mode: "cors",
           redirect: "follow",
@@ -143,9 +178,9 @@ function startScanQR() {
         const data = await response.json();
 
         if (data.ok) {
-          document.getElementById("resultName").textContent       = user_id;
-          document.getElementById("resultCourse").textContent     = course_id;
-          document.getElementById("resultSession").textContent    = session_id;
+          document.getElementById("resultName").textContent = user_id;
+          document.getElementById("resultCourse").textContent = course_id;
+          document.getElementById("resultSession").textContent = session_id;
           document.getElementById("resultPresenceId").textContent = data.data?.presence_id || "—";
           showPage("page3");
         } else {
@@ -153,8 +188,23 @@ function startScanQR() {
           tambahTombolScanUlang();
         }
       } catch (e) {
-        console.error("Error:", e);
-        setStatus("scanStatus", "❌ Failed to fetch - " + (e.message || "cek koneksi & deployment GAS"), "error");
+        console.error("Error detail:", e);
+
+        let errorMsg = e.message || "Kesalahan tidak diketahui";
+
+        // Cek jika error karena gagal parsing URL dari QR Code (misal QR bukan URL valid)
+        if (e instanceof TypeError && errorMsg.includes("URL")) {
+          setStatus("scanStatus", "❌ QR Code bukan URL yang valid", "error");
+        }
+        // Cek jika error murni dari fetch (CORS atau network)
+        else if (errorMsg === "Failed to fetch" || errorMsg.includes("fetch")) {
+          setStatus("scanStatus", "❌ Koneksi ditolak (Periksa hak akses 'Anyone' di GAS)", "error");
+        }
+        // Error lain (seperti "Format QR tidak valid" yang dilempar secara manual)
+        else {
+          setStatus("scanStatus", "❌ " + errorMsg, "error");
+        }
+
         tambahTombolScanUlang();
       }
     }
